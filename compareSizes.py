@@ -1,19 +1,17 @@
 import subprocess
 import re
 
+
 def compareSizes(streamNum, filename):
     valOne = 0
 
+    # Found on stackoverflow, just streams out packets then i capture then in a list
     output = str(subprocess.check_output("cmd /c ffprobe -v error -show_packets -select_streams "+str(streamNum)+" -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \""+filename+"\"", shell=False))
-
-    #os.system("cmd /c ffprobe -v error -show_packets -select_streams s:1 -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \""+filename+"\" > \"Metadata\\" + filename + "(Size2).txt\" 2>&1")
-
-    #txtfile = open("Metadata\\" + filename + "(Size2).txt", encoding="utf8")
 
     cleanOutput = re.sub("[b']", "", output)
     cleanOutput = cleanOutput.replace("\\r", "")
 
-    #print(cleanOutput)
+    # Sum up packets for the final value in Bytes (its not 100% correct)
 
     myList = cleanOutput.split('\\n')
 
@@ -28,4 +26,4 @@ def compareSizes(streamNum, filename):
     #print(cleanOut)
     print("Stream "+str(streamNum)+": "+str(f'{valOne:,}')+" Bytes")
 
-    return(valOne)
+    return valOne

@@ -3,11 +3,15 @@ from pathlib import Path
 import shutil
 import subprocess
 import re
+import platform
+from pathlib import Path
 
 from function_getMetadata import getAndSaveMetadata
 from main2 import main2
 
 directory = os.path.dirname(os.path.realpath(__file__))
+
+print(platform.system())
 
 #print(directory)
 #print(os.listdir(directory))
@@ -19,8 +23,13 @@ Path("Metadata/").mkdir(parents=True, exist_ok=True)
 iterations = 0
 for filename in os.listdir(directory):
     if filename.endswith(".mkv"):  # Find Any MKV files
-        iterations = iterations + 1  # Log how many files we change
 
+        #Check If File Exists
+        if os.path.isfile("MKVoutput/"+filename):
+            print("All ready exists: "+filename)
+            continue #Skip this loop were done here
+
+        iterations = iterations + 1  # Log how many files we change
         streamNum = 0
 
         metadataTable, totalNumOfStreams = getAndSaveMetadata(filename)
