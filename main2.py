@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+from compareSizes import compareSizes
 
 def main2(filename, metadataTable, totalNumOfStreams):
 
@@ -26,12 +27,17 @@ def main2(filename, metadataTable, totalNumOfStreams):
     firstAudioStreamMap = ""  # For adding sub/signs if its the only sub track
     lineNum = 0
     metadataOptions = ""
+    numOfEngSubs = 0  # For selecting the biggest eng sub stream
+    engDefaultSubSelectorString = ""
+    engSubStreams = ""
+    startofengstreams = 0
 
     for line in range(0, totalNumOfStreams):
         titleLang = "\""  # So i don't have to escape so many times (Theres only one titleLand per loop)
         addAudioInfo = False
         aLanguageWasFound = False
         thisStreamLanguage = "und"
+        mapTheSignsSongsStream = False
 
         # Populate temp variables with data from table
         metaTitle = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()
@@ -44,9 +50,10 @@ def main2(filename, metadataTable, totalNumOfStreams):
         # Handles Audio and subtitles
 
         if metaTitle.find("Signs") != -1 or metaTitle.find("Songs") != -1:  # Looking for song/signs
-            metadataOptions = (" -metadata:s:" + str(outputStreamNum) + "\" title=Signs / Songs\"")
+            metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=\"Signs / Songs\"")
             signSongsSubStream = lineNum
             aLanguageWasFound = True
+            mapTheSignsSongsStream = True
         elif metaLang == "eng":
             titleLang += "English"
             thisStreamLanguage = "eng"
@@ -88,13 +95,21 @@ def main2(filename, metadataTable, totalNumOfStreams):
         elif metaCodecType == "audio" and defaultAudioSelected is False:  # Stop FFmpeg from making the first audio stream default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
 
-        if defaultSubSelected is False and metaCodecType == "subtitle" and thisStreamLanguage == "eng" and defaultAudioSelected == True:  # Check if first Eng Audio and set as default
-            defaultSubSelected = True
-            metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
-        elif metaCodecType == "subtitle" and defaultAudioSelected is False:  # Stop FFmpeg from making the first sub stream default
+        if defaultSubSelected is False and metaCodecType == "subtitle" and thisStreamLanguage == "eng" and defaultAudioSelected == True:  # Check if first Eng Sub and set as default
+            #defaultSubSelected = True
+            if startofengstreams == 0:
+                startofengstreams = lineNum
+            numOfEngSubs += 1
+            engSubStreams += str(lineNum) + "|"
+            engDefaultSubSelectorString = " -disposition:" + str(outputStreamNum) + " default"
+        elif metaCodecType == "subtitle" and defaultSubSelected is False:  # Stop FFmpeg from making the first sub stream default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
 
         titleLang += "\""  # zip up titleLang
+
+        if mapTheSignsSongsStream == True:  # Map Songs/signs
+            mapThisStream += str(lineNum) + " "
+            outputStreamNum += 1
 
         if thisStreamLanguage != "und":  # Don't title non eng/jpn (all stream com in as und and were renamed earlier)
             if metaCodecType != "video":  # Don't title video streams
@@ -120,7 +135,53 @@ def main2(filename, metadataTable, totalNumOfStreams):
 
         lineNum += 1
 
-    #txtfile.close()
+    # Select the second biggest subtitle by filesize and set it as default
+    # second biggest because there might be a close caption
+
+    if numOfEngSubs == 1: # set default if theres only one eng sub
+        metadataOptions += engDefaultSubSelectorString
+        defaultSubSelected = True
+        #print(engDefaultSubSelectorString)
+        #print(numOfEngSubs)
+    elif numOfEngSubs > 1:
+
+        lineNum = startofengstreams
+
+        #print("here2")
+        biggestStreamSize = 0
+        biggestStreamNum = 0
+        secondBiggestStreamSize = 0
+        secondBiggestStreamNum = 0
+        selBiggestStream = False
+
+        for i in range(startofengstreams, startofengstreams + numOfEngSubs):  # Start iterating from the first sub
+
+            #print("here3")
+            #print(lineNum)
+
+            if engSubStreams.find(str(lineNum) + "|") != -1:
+                streamSize = compareSizes(lineNum, filename)
+                #print("here4")
+
+                if numOfEngSubs == 2:  # Just select the biggest if theres only 2 subs
+                    selBiggestStream = True
+                    if streamSize > biggestStreamSize:
+                        biggestStreamSize = streamSize
+                        biggestStreamNum = lineNum
+                elif numOfEngSubs > 2:  # select the second biggest if theres more then 2 subs
+                    if streamSize > biggestStreamSize:
+                        biggestStreamSize = streamSize
+                    elif streamSize > secondBiggestStreamSize:
+                        secondBiggestStreamSize = streamSize
+                        secondBiggestStreamNum = lineNum
+
+            lineNum += 1
+
+        if selBiggestStream == True:
+            metadataOptions += " -disposition:" + str(biggestStreamNum) + " default"
+        else:
+            metadataOptions += " -disposition:" + str(secondBiggestStreamNum) + " default"
+        defaultSubSelected = True
 
     if numOfAudioStreams == 0:  # Add an Audio Track if theres no eng/jpn one found
         mapThisStream += firstAudioStreamMap + " "

@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 import shutil
+import subprocess
+import re
 
 from function_getMetadata import getAndSaveMetadata
 from main2 import main2
@@ -18,6 +20,8 @@ iterations = 0
 for filename in os.listdir(directory):
     if filename.endswith(".mkv"):  # Find Any MKV files
         iterations = iterations + 1  # Log how many files we change
+
+        streamNum = 0
 
         metadataTable, totalNumOfStreams = getAndSaveMetadata(filename)
 
