@@ -2,18 +2,12 @@ import os
 from prettytable import PrettyTable
 import ffmpeg
 import json
+import re
 
 
 def getAndSaveMetadata(filename):
 
     # Overview: Call ffmpeg for an output, save to file, read that file line by line in to a PrettyTable for processing. Plus the number of streams.
-
-    #ffprobeOut = json.dumps(ffmpeg.probe(filename), indent=4)
-    #print(json.dumps(ffmpeg.probe(filename), indent=4))
-
-    os.system("cmd /c ffprobe -v error -show_streams \"" + filename + "\" > \"Metadata\\" + filename + "(All).txt\" 2>&1")
-
-    txtfile = open("Metadata\\" + filename + "(all).txt", encoding="utf8")
 
     metadataTable = PrettyTable(['Index', 'title', 'language', 'codec_type', 'channels'])
 
@@ -23,10 +17,23 @@ def getAndSaveMetadata(filename):
     metadataTableCodecType = ""
     metadataTableChannels = ""
     totalNumOfStreams = 0
+    firstIteration = False
 
-    for line in txtfile:
-        if line.find("index=") != -1:
-            if str(line[6:8].replace('\n', '')) != "0":
+    ffmpegDumps = (json.dumps(ffmpeg.probe(filename), indent=4))
+
+    for line in ffmpegDumps.splitlines():
+        #print(line)
+
+        lenAdjust = 2  # Usally there will be a , at the end of the line, so well set the variable and check if its right.
+        if line[len(line) - 1] == "\"":
+            lenAdjust = 1
+        elif line[len(line) - 2] != "\"" and line[len(line) - 1] == ",":
+            lenAdjust = 1
+
+        if line.find("\"index\":") != -1:
+            #print("Index: " + line[21:len(line) - 1])
+
+            if firstIteration == True:
                 metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels])
                 # print(metadataTable.get_string(start=rowNum, end=rowNum + 1, fields=["Index"]))
                 #rowNum += 1
@@ -36,16 +43,19 @@ def getAndSaveMetadata(filename):
                 metadataTableCodecType = ""
                 metadataTableChannels = ""
                 totalNumOfStreams += 1
-            metadataTableIndex = line[6:8].replace('\n', '')
 
-        elif line.find("TAG:title=") != -1:
-            metadataTableTitle = line[10:line.find("/n")]
-        elif line.find("TAG:language") != -1:
-            metadataTableLang = line[13:line.find("/n")]
-        elif line.find("codec_type=") != -1:
-            metadataTableCodecType = line[11:line.find("/n")]
-        elif line.find("channels=") != -1:
-            metadataTableChannels = line[9:line.find("/n")]
+            firstIteration = True
+            metadataTableIndex = line[21:len(line) - 1]
+
+        elif line.find("\"title\":") != -1:
+            metadataTableTitle = line[26:len(line) - lenAdjust]
+        elif line.find("\"language\":") != -1:
+            metadataTableLang = line[29:len(line) - lenAdjust]
+        elif line.find("\"codec_type\":") != -1:
+            metadataTableCodecType = line[27:len(line) - lenAdjust]
+        elif line.find("\"channels\":") != -1:
+            metadataTableChannels = line[24:len(line) - lenAdjust]
+
         #elif line.find("codec_name=") != -1:
         #    currentLine = currentLine + line + " "
         #    metadataTableCodecName = "codec_name=" + str(lineNum)
@@ -62,5 +72,7 @@ def getAndSaveMetadata(filename):
     metadataTable.header = False
 
     #print(totalNumOfStreams, "test")
+
+    #breakpoint()
 
     return(metadataTable, totalNumOfStreams)

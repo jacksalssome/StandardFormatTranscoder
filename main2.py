@@ -1,17 +1,17 @@
 from prettytable import PrettyTable
 from compareSizes import compareSizes
+from gui import createWindowWithInputAndOutput
+import threading
 
 def main2(filename, metadataTable, totalNumOfStreams):
 
     # Overview:
 
-    # Get the preety table and read each row, create variables for each colum. Check variable for relevent info.
-    # First for loop handels meatdata entry, sets defaults streams
-    # Second for loop handles mapping so we don't copy over wanted streams and handels minium amount or streams.
-
+    # Get the pretty table and read each row, create variables for each column. Check variable for relevant info.
+    # First for loop handles metadata entry, sets defaults streams
+    # Second for loop handles mapping so we don't copy over wanted streams and handles minimum amount or streams.
 
     #print("Started main2")
-
 
     mapThisStream = ""  # Don't add streams non eng/jpn streams
     outputStreamNum = 0  # apply the metadata to the final stream number for ffmpeg will forget when it maps the streams "Stream #0:12 -> #0:3 (copy)"
@@ -31,6 +31,13 @@ def main2(filename, metadataTable, totalNumOfStreams):
     engDefaultSubSelectorString = ""
     engSubStreams = ""
     startofengstreams = 0
+    currentStreamNum = 0
+
+    metadataTable2 = PrettyTable(['Index', 'title', 'language', 'codec_type', 'channels'])  # Output Table
+    permTitleLang = ""
+    PermThisStreamLanguage = ""
+    PermMetaCodecType = ""
+    permMetaChannels = ""
 
     for line in range(0, totalNumOfStreams):
         titleLang = "\""  # So i don't have to escape so many times (Theres only one titleLand per loop)
@@ -44,6 +51,11 @@ def main2(filename, metadataTable, totalNumOfStreams):
         metaLang = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()
         metaCodecType = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_type"]).strip()
         metaChannels = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["channels"]).strip()
+
+        #print(metaTitle)
+        #print(metaLang)
+        #print(metaCodecType)
+        #print(metaChannels)
 
         #print(str(lineNum)+": "+metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip())
 
@@ -135,6 +147,31 @@ def main2(filename, metadataTable, totalNumOfStreams):
 
         lineNum += 1
 
+        permMetaChannels = metaChannels
+        permTitleLang = titleLang
+        PermMetaCodecType = metaCodecType
+        PermThisStreamLanguage = thisStreamLanguage
+
+        if titleLang == "\"\"" or metaCodecType == "video":
+            permTitleLang = ""
+        if thisStreamLanguage == "und" or metaCodecType == "video":
+            PermThisStreamLanguage = ""
+        if mapTheSignsSongsStream == True:
+            permTitleLang = "Signs / Songs"
+        #if metaChannels == "":
+        #    permMetaChannels
+
+
+
+        if outputStreamNum > currentStreamNum:
+            currentStreamNum = outputStreamNum
+
+            metadataTable2.add_row([outputStreamNum - 1, permTitleLang.replace("\"", ""), PermThisStreamLanguage, PermMetaCodecType, permMetaChannels])
+            permTitleLang = ""
+            PermThisStreamLanguage = ""
+            PermMetaCodecType = ""
+            permMetaChannels = ""
+
     # Select the second biggest subtitle by filesize and set it as default
     # second biggest because there might be a close caption
 
@@ -212,5 +249,13 @@ def main2(filename, metadataTable, totalNumOfStreams):
     #print(mapThisStream)
 
     metadataAndMaps = metadataOptions+numberOfMaps
+
+
+
+    # Preview Output
+    #print("")
+    #print("+-------+------------Output Preview-+------------+----------+")
+    #print(metadataTable2.get_string())
+    #print("")
 
     return metadataAndMaps

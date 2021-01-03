@@ -1,8 +1,13 @@
 import subprocess
 import re
+import ffmpeg
+import json
 
 
 def compareSizes(streamNum, filename):
+
+    #print("Determining best subtitle stream")
+
     valOne = 0
 
     # Found on stackoverflow, just streams out packets then i capture then in a list
@@ -24,6 +29,6 @@ def compareSizes(streamNum, filename):
     #print(sum(myList))
 
     #print(cleanOut)
-    print("Stream "+str(streamNum)+": "+str(f'{valOne:,}')+" Bytes")
+    #print("Stream "+str(streamNum)+": "+str(f'{valOne:,}')+" Bytes")
 
     return valOne
