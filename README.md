@@ -6,6 +6,7 @@ Windows
 
 How to run:
 
+* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the zip file
 * Have python installed
 * python dipendacies: ffmpeg-python, prettytable (cmd: python pip install ffmpeg-python prettytable)
 
