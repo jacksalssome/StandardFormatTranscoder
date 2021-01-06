@@ -75,4 +75,4 @@ def getAndSaveMetadata(filename):
 
     #breakpoint()
 
-    return(metadataTable, totalNumOfStreams)
+    return metadataTable, totalNumOfStreams

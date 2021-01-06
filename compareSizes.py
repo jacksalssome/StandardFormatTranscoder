@@ -3,10 +3,10 @@ import re
 import ffmpeg
 import json
 
-
+iterations = 0
 def compareSizes(streamNum, filename):
 
-    #print("Determining best subtitle stream")
+    #print("Determining best subtitle via stream filesize")
 
     valOne = 0
 
@@ -22,7 +22,7 @@ def compareSizes(streamNum, filename):
 
     for line in myList:
         #print(line)
-        if not line == "":
+        if line != "":
             valOne += int(line)
 
     #print(valOne)
@@ -32,3 +32,4 @@ def compareSizes(streamNum, filename):
     #print("Stream "+str(streamNum)+": "+str(f'{valOne:,}')+" Bytes")
 
     return valOne
+

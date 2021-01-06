@@ -1,7 +1,6 @@
 from prettytable import PrettyTable
 from compareSizes import compareSizes
-from gui import createWindowWithInputAndOutput
-import threading
+
 
 def main2(filename, metadataTable, totalNumOfStreams):
 
@@ -82,13 +81,13 @@ def main2(filename, metadataTable, totalNumOfStreams):
                 titleLang += "English"
                 thisStreamLanguage = "eng"
                 addAudioInfo = True
-                print("Found Title Via Backup way")
+                print("Found title via stream title(eng)")
 
             elif metaTitle.find("Japanese") != -1 or metaTitle.find("Japonês") != -1:
                 titleLang += "Japanese"
                 thisStreamLanguage = "jpn"
                 addAudioInfo = True
-                print("Found Title Via Backup way")
+                print("Found title via stream title(jpn)")
 
         if addAudioInfo is True:
             if metaChannels == "2":
@@ -191,6 +190,8 @@ def main2(filename, metadataTable, totalNumOfStreams):
         secondBiggestStreamNum = 0
         selBiggestStream = False
 
+        print("Determining best subtitle via stream filesizes")
+
         for i in range(startofengstreams, startofengstreams + numOfEngSubs):  # Start iterating from the first sub
 
             #print("here3")
@@ -249,8 +250,6 @@ def main2(filename, metadataTable, totalNumOfStreams):
     #print(mapThisStream)
 
     metadataAndMaps = metadataOptions+numberOfMaps
-
-
 
     # Preview Output
     #print("")
