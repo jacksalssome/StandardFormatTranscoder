@@ -3,7 +3,7 @@
 
 * Automaticly selects a japanese audio track and the "best" english subtitle track
 
-* Leaves video alone, if you giv it a HEVC, ACC and HDMV-PGS it will just copy them and change the metadata.
+* Leaves video alone, if you give it a MKV(HEVC, ACC and HDMV-PGS) it will just copy them and change the metadata.
 
 * Removes attachments and cover art
 
