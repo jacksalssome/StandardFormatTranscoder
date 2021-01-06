@@ -5,6 +5,8 @@
 
 * Leaves video alone, if you giv it a HEVC, ACC and HDMV-PGS it will just copy them and change the metadata.
 
+* Removes attachments and cover art
+
 Supported platforms:
 Windows
 
