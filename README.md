@@ -1,5 +1,6 @@
 # standard-format-transcoder
-Transcode Media files into standard format.
+Removes metadate from Video files (currently only .MKV), but leaves track titles
+Automaticly selects a japanese audio track and the "best" english subtitle track
 
 Supported platforms:
 Windows
