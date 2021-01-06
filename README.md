@@ -1,6 +1,9 @@
 # standard-format-transcoder
-Removes metadate from Video files (currently only .MKV), but leaves track titles
-Automaticly selects a japanese audio track and the "best" english subtitle track
+* Removes metadate from Video files (currently only .MKV), but leaves track titles
+
+* Automaticly selects a japanese audio track and the "best" english subtitle track
+
+* Leaves video alone, if you giv it a HEVC, ACC and HDMV-PGS it will just copy them and change the metadata.
 
 Supported platforms:
 Windows
