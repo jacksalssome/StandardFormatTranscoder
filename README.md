@@ -26,7 +26,7 @@ To find and install ffmpeg and ffprobe under windows:
 2) extract the zip and go into the bin folder, you'll see ffmpeg.exe, ffplay.exe and ffprobe.exe
 3) copy ffmpeg.exe and ffprobe.exe to C:\Program Files\ffmpeg
 4) Open the start menu and search for SystemPropertiesAdvanced.exe, then click on the "Environment Variables..." button
-5) Under "user variables" click on the Path variable, then click the "Edit.." button
+5) Under "Sytem variables" click on the Path variable, then click the "Edit.." button
 6) Click on New and type in "C:\Program Files\ffmpeg\ffmpeg.exe" (No Quotes)
 7) Clikc new again and type in "C:\Program Files\ffmpeg\ffprobe.exe"
 8) Sign out of your account, then you sign back in ffmpeg should be working (can test by typing "ffmpeg -v" in cmd)
