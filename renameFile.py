@@ -234,6 +234,7 @@ def renameFile(filename):
             outputFilename = outputFilename[:outputFilenameLower.find(itemLower)] + outputFilename[outputFilenameLower.find(itemLower) + len(item):]
 
     outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename)  # remove e.g.[ABC12345]
+    outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename)  # remove e.g.(ABC12345)
 
     outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
     outputFilename = outputFilename.replace("_", " ")  # _ is usually a stand in for a space
@@ -247,7 +248,6 @@ def renameFile(filename):
     outputFilename = re.sub(r"ep([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep3 to E03 Haven't seen one with this case, but il code it in anyway
 
     outputFilename = re.sub("- ([0-9][0-9][0-9])$", r" E\1 ", outputFilename)  # Replace "- 001" with E001, why would any have so may episodes, IDK
-    outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably a ep number
     outputFilename = re.sub("-([0-9][0-9])$", r" E\1 ", outputFilename)  # Replace -01 If at end of file name
     outputFilename = re.sub("\[([0-9][0-9])\]", r" E\1 ", outputFilename)  # Replace [01] with E01
     outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename)  # 11x01 to S11E01
@@ -258,9 +258,10 @@ def renameFile(filename):
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one
 
-    outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
-
+    outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably a ep number
     outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number.
+
+    outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
     outputFilename += ".mkv"  # Add extension
 
     #print(outputFilename)

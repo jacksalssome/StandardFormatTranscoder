@@ -7,7 +7,7 @@ from colorama import Fore, Style
 import sys
 
 
-def getAndSaveMetadata(filename):
+def getAndSaveMetadata(filename, filenameAndDirectory):
 
     # Overview: Call ffmpeg for an output, save to file, read that file line by line in to a PrettyTable for processing. Plus the number of streams.
 
@@ -22,7 +22,7 @@ def getAndSaveMetadata(filename):
     firstIteration = False
 
     try:
-        ffmpegDumps = (json.dumps(ffmpeg.probe(filename), indent=4))
+        ffmpegDumps = (json.dumps(ffmpeg.probe(filenameAndDirectory), indent=4))
     except:
         print(Fore.RED + "Theres a problem with the input file: " + filename + Style.RESET_ALL)
         print(Fore.RED + "Possible corruption, incomplete file or permissions problem" + Style.RESET_ALL)
@@ -82,4 +82,4 @@ def getAndSaveMetadata(filename):
 
     #breakpoint()
 
-    return(metadataTable, totalNumOfStreams)
+    return metadataTable, totalNumOfStreams
