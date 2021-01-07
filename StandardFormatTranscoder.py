@@ -57,7 +57,10 @@ elif os.path.exists(args.input):
             else:
                 print("Please enter yes or no.")
 else:
-    print(Fore.YELLOW + "Can't find file path: " + Fore.RESET + args.input)
+    if "yes" == re.sub("[A-Z]:\"", "yes", str(args.input)):
+        print(Fore.YELLOW + "Can't run in root of drive input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
+    else:
+        print(Fore.YELLOW + "Can't find file path: " + Fore.RESET + args.input)
     input("Press Enter to exit...")
     sys.exit()
 
