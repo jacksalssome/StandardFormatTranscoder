@@ -1,4 +1,4 @@
-# standard-format-transcoder
+# StandardFormatTranscoder
 * Removes metadata from Video files (currently only .MKV), but leaves track titles with audio channels, so if its 5.1 surround and an english track it will be: English (5.1)
 
 * Automaticly selects a japanese audio track and the "best" english subtitle track
