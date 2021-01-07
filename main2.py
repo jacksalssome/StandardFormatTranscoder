@@ -1,7 +1,6 @@
 from prettytable import PrettyTable
 from compareSizes import compareSizes
-from gui import createWindowWithInputAndOutput
-import threading
+
 
 def main2(filename, metadataTable, totalNumOfStreams):
 

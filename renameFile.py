@@ -240,8 +240,6 @@ def renameFile(filename):
 
     outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994)
 
-    outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
-
     outputFilename = re.sub(r"ep ([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep 13 to E13
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
 
@@ -260,7 +258,10 @@ def renameFile(filename):
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one
 
-    outputFilename = re.sub("\s[0-9][0-9]$", " E"+outputFilename[len(outputFilename) - 2:len(outputFilename)], outputFilename) + ".mkv"  # Add E to episode number and add extension
+    outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
+
+    outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number.
+    outputFilename += ".mkv"  # Add extension
 
     #print(outputFilename)
 

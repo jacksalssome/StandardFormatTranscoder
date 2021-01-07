@@ -3,6 +3,8 @@ from prettytable import PrettyTable
 import ffmpeg
 import json
 import re
+from colorama import Fore, Style
+import sys
 
 
 def getAndSaveMetadata(filename):
@@ -19,7 +21,12 @@ def getAndSaveMetadata(filename):
     totalNumOfStreams = 0
     firstIteration = False
 
-    ffmpegDumps = (json.dumps(ffmpeg.probe(filename), indent=4))
+    try:
+        ffmpegDumps = (json.dumps(ffmpeg.probe(filename), indent=4))
+    except:
+        print(Fore.RED + "Theres a problem with the input file: " + filename + Style.RESET_ALL)
+        print(Fore.RED + "Possible corruption, incomplete file or permissions problem" + Style.RESET_ALL)
+        return None
 
     for line in ffmpegDumps.splitlines():
         #print(line)
