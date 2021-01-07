@@ -1,4 +1,8 @@
-# standard-format-transcoder
+# StandardFormatTranscoder
+<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF.png" alt="SMF logo" width="20%" />
+                                                                                                                      
+## Overview
+
 * Removes metadata from Video files (currently only .MKV), but leaves track titles with audio channels, so if its 5.1 surround and an english track it will be: English (5.1)
 
 * Automaticly selects a japanese audio track and the "best" english subtitle track
@@ -7,27 +11,43 @@
 
 * Removes attachments and cover art
 
-Supported platforms:
-Windows
+Supported platforms:  
+Windows  
+Linux: coming soon  
+MacOs: I dont have a Mac :/
 
-How to run:
+## Installing
 
-* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the zip file
-* Have python installed
-* python dipendacies: ffmpeg-python, prettytable, colorama (cmd: pip install ffmpeg-python prettytable colorama)
+* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the .exe
+* Have ffmpeg and ffprobe in the system path
 
-1) Move the files (compareSizes.py, function_getMetadata.py, main2.py, renameFile.py and standard_format_transcoder.py)
-   to the directory with the video (MKV) files you want to convert
-2) Open cmd and cd into the same directory
-3) type: python standard_format_transcoder.py
-4) The program will start running
+To find and install ffmpeg and ffprobe under windows:
+1) Download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+2) extract the zip and go into the bin folder, you'll see ffmpeg.exe, ffplay.exe and ffprobe.exe
+3) copy ffmpeg.exe and ffprobe.exe to C:\Program Files\ffmpeg
+4) Open the start menu and search for SystemPropertiesAdvanced.exe, then click on the "Environment Variables..." button
+5) Under "Sytem variables" click on the Path variable, then click the "Edit.." button
+6) Click on New and type in "C:\Program Files\ffmpeg" (No Quotes)
+8) Log off and back on, ffmpeg should be working now (can test by typing "ffmpeg" in cmd)
 
+ ## How to run
 
-Linux: coming soon
+###### The Easy way:  
 
-MacOs: i dont have a Mac :/
+Double click on the exe if you want to change files in the same directory  
+You can then just move the exe around from directory to directory
 
-Examples:
+###### The Standard way:
+
+    > cd <Path where the exe is>
+    > standard-format-transcoder.exe --input \Path where the files are>
+
+    For Example:
+
+    > cd C:\Users\username\Downloads\standard-format-transcoder
+    > standard-format-transcoder.exe --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+
+## Examples
 
 Here is a breakdown of a MKV file showing each video, audio, subtitle and attachments(Usally fonts, or cover art)
 
