@@ -40,7 +40,7 @@ You can then just move the exe around from directory to directory
 
 ###### The Standard way:
 
-    > cd \Path where the exe is>
+    > cd <Path where the exe is>
     > standard-format-transcoder.exe --input \Path where the files are>
 
     For Example:
