@@ -43,6 +43,8 @@ You can then just move the exe around from directory to directory
     > cd \Path where the exe is>
     > standard-format-transcoder.exe --input \Path where the files are>
 
+    For Example:
+
     > cd C:\Users\username\Downloads\standard-format-transcoder
     > standard-format-transcoder.exe --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
 
