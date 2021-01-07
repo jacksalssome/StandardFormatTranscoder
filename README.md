@@ -1,4 +1,8 @@
 # StandardFormatTranscoder
+<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF.png" alt="SMF logo" width="20%" />
+                                                                                                                      
+## Overview
+
 * Removes metadata from Video files (currently only .MKV), but leaves track titles with audio channels, so if its 5.1 surround and an english track it will be: English (5.1)
 
 * Automaticly selects a japanese audio track and the "best" english subtitle track
@@ -10,7 +14,7 @@
 Supported platforms:
 Windows
 
-How to run:
+## How to run:
 
 * Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the zip file
 * Have python installed
@@ -27,7 +31,7 @@ Linux: coming soon
 
 MacOs: i dont have a Mac :/
 
-Examples:
+## Examples
 
 Here is a breakdown of a MKV file showing each video, audio, subtitle and attachments(Usally fonts, or cover art)
 
