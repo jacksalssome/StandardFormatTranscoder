@@ -75,7 +75,7 @@ elif args.recursive is None:
 # print(os.listdir(directory))
 
 # print("Transcode Starting")
-Path(directory + "\\" + "MKVoutput").mkdir(parents=True, exist_ok=True)
+#Path(directory + "\\" + "MKVoutput").mkdir(parents=True, exist_ok=True)
 # Path("Metadata/").mkdir(parents=True, exist_ok=True)
 
 iterations = 0
