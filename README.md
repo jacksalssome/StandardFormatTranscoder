@@ -14,7 +14,7 @@ How to run:
 
 * Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the zip file
 * Have python installed
-* python dipendacies: ffmpeg-python, prettytable (cmd: pip install ffmpeg-python prettytable)
+* python dipendacies: ffmpeg-python, prettytable, colorama (cmd: pip install ffmpeg-python prettytable colorama)
 
 1) Move the files (compareSizes.py, function_getMetadata.py, main2.py, renameFile.py and standard_format_transcoder.py)
    to the directory with the video (MKV) files you want to convert
