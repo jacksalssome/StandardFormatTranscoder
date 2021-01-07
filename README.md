@@ -16,17 +16,36 @@ Windows
 Linux: coming soon  
 MacOs: I dont have a Mac :/
 
-## How to run:
+## Installing
 
-* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the zip file
-* Have python installed
-* python dipendacies: ffmpeg-python, prettytable, colorama (cmd: pip install ffmpeg-python prettytable colorama)
+* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the .exe
+* Have ffmpeg and ffprobe in the system path
 
-1) Move the files (compareSizes.py, function_getMetadata.py, main2.py, renameFile.py and standard_format_transcoder.py)
-   to the directory with the video (MKV) files you want to convert
-2) Open cmd and cd into the same directory
-3) type: python standard_format_transcoder.py
-4) The program will start running
+To find and install ffmpeg and ffprobe under windows:
+1) Download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+2) extract the zip and go into the bin folder, you'll see ffmpeg.exe, ffplay.exe and ffprobe.exe
+3) copy ffmpeg.exe and ffprobe.exe to C:\Program Files\ffmpeg
+4) Open the start menu and search for SystemPropertiesAdvanced.exe, then click on the "Environment Variables..." button
+5) Under "user variables" click on the Path variable, then click the "Edit.." button
+6) Click on New and type in "C:\Program Files\ffmpeg\ffmpeg.exe" (No Quotes)
+7) Clikc new again and type in "C:\Program Files\ffmpeg\ffprobe.exe"
+8) Sign out of your account, then you sign back in ffmpeg should be working (can test by typing "ffmpeg -v" in cmd)
+
+ ## How to run
+
+The Easy way:  
+Double click on the exe if you want to change files in the same directory  
+You can then just move the exe around from directory to directory
+
+In cmd type  
+
+    > cd <Path where the exe is>
+    > standard-format-transcoder.exe --input <Path where the files are>
+  
+For example: 
+
+    > cd C:\Users\username\Downloads\standard-format-transcoder
+    > standard-format-transcoder.exe --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
 
 ## Examples
 
