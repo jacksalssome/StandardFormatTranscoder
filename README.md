@@ -29,7 +29,7 @@ To find and install ffmpeg and ffprobe under windows:
 5) Under "Sytem variables" click on the Path variable, then click the "Edit.." button
 6) Click on New and type in "C:\Program Files\ffmpeg\ffmpeg.exe" (No Quotes)
 7) Clikc new again and type in "C:\Program Files\ffmpeg\ffprobe.exe"
-8) Sign out of your account, then you sign back in ffmpeg should be working (can test by typing "ffmpeg -v" in cmd)
+8) Reboot and ffmpeg should be working (can test by typing "ffmpeg -v" in cmd)
 
  ## How to run
 
