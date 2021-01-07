@@ -45,7 +45,7 @@ def main2(filename, metadataTable, totalNumOfStreams):
         thisStreamLanguage = "und"
         mapTheSignsSongsStream = False
 
-        # Populate temp variables with data from table
+        # Populate temp variables with data from prettytable
         metaTitle = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()
         metaLang = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()
         metaCodecType = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_type"]).strip()
