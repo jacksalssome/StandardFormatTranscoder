@@ -46,6 +46,11 @@ You can then just move the exe around from directory to directory
 
     > cd C:\Users\username\Downloads\
     > StandardFormatTranscoder.exe --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    
+    Recursive:
+    
+    > StandardFormatTranscoder.exe -r --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+
 
 ## Examples
 
