@@ -33,17 +33,15 @@ To find and install ffmpeg and ffprobe under windows:
 
  ## How to run
 
-The Easy way:  
+* The Easy way:  
 
 Double click on the exe if you want to change files in the same directory  
 You can then just move the exe around from directory to directory
 
-The Standard way:  
-
-In cmd type:
-
-    > cd <Path where the exe is>
-    > standard-format-transcoder.exe --input <Path where the files are>
+* The Standard way:
+    
+      > cd <Path where the exe is>
+      > standard-format-transcoder.exe --input <Path where the files are>
   
 For example:
 
