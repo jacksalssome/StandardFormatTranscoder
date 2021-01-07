@@ -11,8 +11,10 @@
 
 * Removes attachments and cover art
 
-Supported platforms:
-Windows
+Supported platforms:  
+Windows  
+Linux: coming soon  
+MacOs: I dont have a Mac :/
 
 ## How to run:
 
@@ -25,11 +27,6 @@ Windows
 2) Open cmd and cd into the same directory
 3) type: python standard_format_transcoder.py
 4) The program will start running
-
-
-Linux: coming soon
-
-MacOs: i dont have a Mac :/
 
 ## Examples
 
