@@ -12,8 +12,7 @@
 * Removes attachments and cover art
 
 Supported platforms:  
-Windows  
-Linux
+Windows & Linux
 
 MacOs: I dont have a Mac :/
 
