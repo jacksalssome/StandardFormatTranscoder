@@ -1,2 +1,8 @@
-.mkv
-.mp4
+*.mkv
+*.mp4
+build
+dist
+*.spec
+*.bat
+.git
+.idea
