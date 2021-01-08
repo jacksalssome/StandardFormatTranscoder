@@ -24,7 +24,7 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
     try:
         ffmpegDumps = (json.dumps(ffmpeg.probe(filenameAndDirectory), indent=4))
     except:
-        print(Fore.RED + "Theres a problem with the input file: " + filename + Style.RESET_ALL)
+        print(Fore.RED + "Theres a problem with the input file: " + Style.RESET_ALL + filename)
         print(Fore.RED + "Possible corruption, incomplete file or permissions problem" + Style.RESET_ALL)
         return None
 

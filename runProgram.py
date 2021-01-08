@@ -9,8 +9,7 @@ from renameFile import renameFile
 from function_getMetadata import getAndSaveMetadata
 from main2 import main2
 
-
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory):
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS):
 
     # Check If File Exists
 
@@ -30,14 +29,19 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         return
 
     # Process metadata
-    metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams)
+    metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS)
 
-    # Output:
-    # print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
-    errorCheck = run("cmd /c ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+    if currentOS == "Linux":
+        print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        errorCheck = run("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+
+    elif currentOS == "Windows":
+        # Output:
+        # print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        errorCheck = run("cmd /c ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
     if str(errorCheck.stderr) != "b\'\'":  # Integrity and error check
-
+        print(str(errorCheck.stderr))
         length = len(Fore.BLUE + "Started: " + filename + Fore.RESET)
         negLength = len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET)
         littleSpaces = ' ' * (length - negLength)  # Pack the output with spaces or there will be characters left from the overwritten print

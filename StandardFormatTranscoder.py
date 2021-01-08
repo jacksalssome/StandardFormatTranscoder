@@ -1,10 +1,10 @@
 import os
+from os.path import basename
 from pathlib import Path
 import shutil
 import subprocess
 import re
 import platform
-from pathlib import Path
 from colorama import init
 from subprocess import run
 from colorama import Fore  # Color in windows and linux
@@ -13,6 +13,18 @@ import argparse
 
 from renameFile import renameFile
 from runProgram import runProgram
+
+# Check Platform
+if platform.system() == "Linux":
+    fileSlashes = "/"
+    currentOS = "Linux"
+elif platform.system() == "Windows":
+    fileSlashes = "\\"
+    currentOS = "Windows"
+else:
+    print("Unsupported operating system")
+    input("Press Enter to exit...")
+    sys.exit()
 
 init()  # Stops makes sure windows displays colour
 
@@ -57,8 +69,11 @@ elif os.path.exists(args.input):
             else:
                 print("Please enter yes or no.")
 else:
-    if "yes" == re.sub("[A-Z]:\"", "yes", str(args.input)):
-        print(Fore.YELLOW + "Can't run in root of drive input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
+    if "yes" == re.sub("[A-Z]:\"", "yes", str(args.input)) or args.input == "/":
+        if currentOS == "Windows":
+            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
+        elif currentOS == "Linux":
+            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"/home\"")
     else:
         print(Fore.YELLOW + "Can't find file path: " + Fore.RESET + args.input)
     input("Press Enter to exit...")
@@ -66,12 +81,10 @@ else:
 
 runRecursive = False
 
-if args.recursive is not None:  # If -r or --recursive is present then enable recursive
+if args.recursive == True:  # If -r or --recursive is present then enable recursive
     runRecursive = True
-elif args.recursive is None:
+elif args.recursive == False:
     runRecursive = False
-
-# print(platform.system())
 
 # print(os.listdir(directory))
 
@@ -80,27 +93,29 @@ failedFiles = 0
 warningFiles = 0
 
 if runRecursive == True:
+    parentDirectoryName = basename(directory)
+    outputDirectory = str(Path(directory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
     for root, dirs, files in os.walk(directory):  # find the root, the directories and files.
-        for filename in files:  # Iterate over every file
-            if filename.endswith(".mkv"):  # If current file is an MKV
-                if root.find("SFT output") != -1:  # stop from descending into own output
+        for inputFilename in files:  # Iterate over every file
+            if inputFilename.endswith(".mkv"):  # If current file is an MKV
+
+                if root.find("SFT output of; " + parentDirectoryName) != -1:  # stop from descending into own output
                     continue
+                inputDirectory = directory
+                inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
 
-                directory = str(Path(directory).parent)
+                outputFilename = renameFile(inputFilename)  # Call up function renameFile
+                outputFilenameAndDirectory = root.replace(directory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
 
-                outputFileName = renameFile(filename)  # Call up function renameFile
-                outputFileNameTmp = os.path.join(root) + "\\" + outputFileName  # Rename File and put it in "SFT output; <Selected folder>" directory
                 # Make the top directory "SFT output; <Selected folder>":
-                Path((os.path.join(root)).replace(directory, directory + "\\" + "SFT output; ")).mkdir(parents=True, exist_ok=True)
-                # Add "SFT output; <Selected folder>" as a top directory and we will create a clone directory of only (.mkv's):
-                outputFileNameTmp = outputFileNameTmp.replace(directory, directory + "\\" + "SFT output; ")  # Absolute path of output file
-                filenameAndDirectory = os.path.join(root) + "\\" + filename  # Absolute path of input file
+                Path(root.replace(directory, outputDirectory)).mkdir(parents=True, exist_ok=True)
+
                 try:
-                    iterations, failedFiles, warningFiles = runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameTmp)
+                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
-                    os.remove(Path(outputFileNameTmp))  # Delete the file since its not done
+                    os.remove(Path(outputFilenameAndDirectory))  # Delete the file since its not done
                     sys.exit()
                 except:  # if runProgram gives us an error or warning well jump to the next file
                     continue
@@ -108,11 +123,12 @@ if runRecursive == True:
 elif runRecursive == False:
     for filename in os.listdir(directory):
         if filename.endswith(".mkv"):  # Find Any MKV files
+            Path("SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  #Make Dir
             outputFileName = renameFile(filename)  # Rename File
-            outputFileNameAndDirectory = directory + "\\" + "SFT output" + "\\" + outputFileName  # Where to put the output file
-            filenameAndDirectory = directory + "\\" + filename  # Absolute path of input file
+            outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFileName  # Where to put the output file
+            filenameAndDirectory = directory + fileSlashes + filename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles = runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory)
+                iterations, failedFiles, warningFiles = runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")

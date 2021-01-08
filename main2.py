@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 from compareSizes import compareSizes
 
 
-def main2(filename, metadataTable, totalNumOfStreams):
+def main2(filename, metadataTable, totalNumOfStreams, currentOS):
 
     # Overview:
 
@@ -196,7 +196,7 @@ def main2(filename, metadataTable, totalNumOfStreams):
             #print(lineNum)
 
             if engSubStreams.find(str(lineNum) + "|") != -1:
-                streamSize = compareSizes(lineNum, filename)
+                streamSize = compareSizes(lineNum, filename, currentOS)
                 #print("here4")
 
                 if numOfEngSubs == 2:  # Just select the biggest if theres only 2 subs
@@ -248,8 +248,6 @@ def main2(filename, metadataTable, totalNumOfStreams):
     #print(mapThisStream)
 
     metadataAndMaps = metadataOptions+numberOfMaps
-
-
 
     # Preview Output
     #print("")

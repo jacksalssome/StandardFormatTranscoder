@@ -4,7 +4,7 @@ import ffmpeg
 import json
 
 
-def compareSizes(streamNum, filename):
+def compareSizes(streamNum, filename, currentOS):
 
     #print("Determining best subtitle stream")
 
