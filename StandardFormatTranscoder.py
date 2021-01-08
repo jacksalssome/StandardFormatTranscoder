@@ -1,12 +1,9 @@
 import os
 from os.path import basename
 from pathlib import Path
-import shutil
-import subprocess
 import re
 import platform
 from colorama import init
-from subprocess import run
 from colorama import Fore  # Color in windows and linux
 import sys
 import argparse
@@ -26,10 +23,13 @@ else:
     input("Press Enter to exit...")
     sys.exit()
 
+# TODO:
+# Add -o --output, so user can specify and output dir
+# Add MP4?
+
 init()  # Stops makes sure windows displays colour
 
-print(
-    Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
+print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', help="\"input filename\"")
@@ -39,7 +39,7 @@ args, unknown = parser.parse_known_args()
 
 if unknown:
     print(Fore.YELLOW + "Don't know what this is: " + Fore.RESET + str(unknown))
-    print(Fore.YELLOW + "Make sure there are quotes (\"\") around the directory if there are spaces in it." + Fore.RESET)
+    print(Fore.YELLOW + "Make sure there are quotes (\"\") around the input and output directory's if there are spaces in it." + Fore.RESET)
     input("Press Enter to exit...")
     sys.exit()
 
@@ -128,6 +128,7 @@ if runRecursive == True:
                     sys.exit()
                 except:  # if runProgram gives us an error or warning well jump to the next file
                     continue
+    print("Your files are in: " + outputDirectory + fileSlashes + "*")  # Program is almost done, so we'll make sure the user knows where their files are.
 
 elif runRecursive == False:
     for inputFilename in os.listdir(directory):
@@ -161,4 +162,3 @@ if failedFiles != 0:
 if warningFiles != 0:
     print(Fore.YELLOW + str(warningFiles) + " Warnings" + Fore.RESET)
 input("Press ENTER to exit...")
-
