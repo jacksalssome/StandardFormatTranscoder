@@ -56,39 +56,29 @@ You can then just move the exe around from directory to directory
 
 Here is a breakdown of a MKV file showing each video, audio, subtitle and attachments(Usally fonts, or cover art)
 
-    +-------+-----------------Input Preview--+------------+----------+
-    +-------+---------------------+----------+------------+----------+
-    | Index |        title        | language | codec_type | channels |
-    +-------+---------------------+----------+------------+----------+
-    |   0   | Encoded by Iloveyou |          |   video    |          |
-    |   1   |                     |   eng    |   audio    |    6     |
-    |   2   | Japanese (Iloveyou) |   jpn    |   audio    |    2     |
-    |   3   |     Signs/Songs     |   eng    |  subtitle  |          |
-    |   4   |     (Iloveyou)      |   eng    |  subtitle  |          |
-    |   5   |                     |          | attachment |          |
-    |   6   |                     |          | attachment |          |
-    |   7   |                     |          | attachment |          |
-    |   8   |                     |          | attachment |          |
-    |   9   |                     |          | attachment |          |
-    |   10  |                     |          | attachment |          |
-    |   11  |                     |          | attachment |          |
-    |   12  |                     |          | attachment |          |
-    |   13  |                     |          | attachment |          |
-    |   14  |                     |          | attachment |          |
-    +-------+---------------------+----------+------------+----------+
-
-And heres the MKV after:
-
-    +-------+------------Output Preview-+------------+----------+
-    +-------+----------------+----------+------------+----------+
-    | Index |     title      | language | codec_type | channels |
-    +-------+----------------+----------+------------+----------+
-    |   0   |                |          |   video    |          |
-    |   1   | English (5.1)  |   eng    |   audio    |    6     |
-    |   2   | Japanese (2.0) |   jpn    |   audio    |    2     |
-    |   3   | Signs / Songs  |          |  subtitle  |          |
-    |   4   |    English     |   eng    |  subtitle  |          |
-    +-------+----------------+----------+------------+----------+
+    +-------+-----------------Input Preview--+------------+----------+     +-------+------------Output Preview-+------------+----------+
+    +-------+---------------------+----------+------------+----------+     +-------+----------------+----------+------------+----------+
+    | Index |        title        | language | codec_type | channels |     | Index |     title      | language | codec_type | channels |
+    +-------+---------------------+----------+------------+----------+     +-------+----------------+----------+------------+----------+
+    |   0   | Encoded by Iloveyou |          |   video    |          |     |   0   |                |          |   video    |          |
+    |   1   |                     |   eng    |   audio    |    6     |     |   1   | English (5.1)  |   eng    |   audio    |    6     |
+    |   2   | Japanese (Iloveyou) |   jpn    |   audio    |    2     |     |   2   | Japanese (2.0) |   jpn    |   audio    |    2     |
+    |   3   |     Signs/Songs     |   eng    |  subtitle  |          |     |   3   | Signs / Songs  |          |  subtitle  |          |
+    |   4   |     (Iloveyou)      |   eng    |  subtitle  |          |     |   4   |    English     |   eng    |  subtitle  |          |
+    |   5   |       English       |   eng    |  subtitle  |          |     |   5   |    English     |   eng    |  subtitle  |          |
+    |   6   |  English [yoyRips]  |   eng    |  subtitle  |          |     |   6   |    English     |   eng    |  subtitle  |          |
+    |   7   |                     |          | attachment |          |     +-------+----------------+----------+------------+----------+
+    |   8   |                     |          | attachment |          |     
+    |   9   |                     |          | attachment |          |     
+    |   10  |                     |          | attachment |          |     
+    |   11  |                     |          | attachment |          |     
+    |   12  |                     |          | attachment |          |     
+    |   13  |                     |          | attachment |          |     
+    |   14  |                     |          | attachment |          |     
+    |   15  |                     |          | attachment |          |     
+    +-------+---------------------+----------+------------+----------+     
+    
+    If theres a conflict, like index 4, 5 and 6, then it will select the second largest subtitle by file size.
 
 Heres some examples of automatic file renaming:
 
