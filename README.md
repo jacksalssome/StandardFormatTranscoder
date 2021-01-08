@@ -109,3 +109,8 @@ Output: A-Show! E03 Episode Title!.mkv
 
 So standard formatting for a filename is:  
 [Show Title] [Season & Episode] [Episode Title]
+
+# Compiling
+
+I use PyCharm 2020
+pyinstaller  --icon=favicon.ico --onefile standard-format-transcoder.py
