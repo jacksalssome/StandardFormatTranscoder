@@ -34,6 +34,7 @@ print(
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', help="\"input filename\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
+parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 args, unknown = parser.parse_known_args()
 
 if unknown:
@@ -80,11 +81,16 @@ else:
     sys.exit()
 
 runRecursive = False
-
 if args.recursive == True:  # If -r or --recursive is present then enable recursive
     runRecursive = True
 elif args.recursive == False:
     runRecursive = False
+
+runRename = False
+if args.rename == True:  # If --rename present, then enable auto renaming
+    runRename = True
+elif args.rename == False:
+    runRename = False
 
 # print(os.listdir(directory))
 
@@ -104,7 +110,10 @@ if runRecursive == True:
                 inputDirectory = directory
                 inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
 
-                outputFilename = renameFile(inputFilename)  # Call up function renameFile
+                if runRename == True:
+                    outputFilename = renameFile(inputFilename)  # Call up function renameFile
+                else:
+                    outputFilename = inputFilename
                 outputFilenameAndDirectory = root.replace(directory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
 
                 # Make the top directory "SFT output; <Selected folder>":
@@ -121,14 +130,19 @@ if runRecursive == True:
                     continue
 
 elif runRecursive == False:
-    for filename in os.listdir(directory):
-        if filename.endswith(".mkv"):  # Find Any MKV files
-            Path(directory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  #Make Dir
-            outputFileName = renameFile(filename)  # Rename File
-            outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFileName  # Where to put the output file
-            filenameAndDirectory = directory + fileSlashes + filename  # Absolute path of input file
+    for inputFilename in os.listdir(directory):
+        if inputFilename.endswith(".mkv"):  # Find Any MKV files
+            Path(directory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
+
+            if runRename == True:  # Rename File
+                outputFilename = renameFile(inputFilename)  # Call up function renameFile
+            else:  # keep file name
+                outputFilename = inputFilename
+
+            outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
+            inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles = runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS)
+                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
