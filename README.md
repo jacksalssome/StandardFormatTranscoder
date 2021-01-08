@@ -50,6 +50,9 @@ You can then just move the exe around from directory to directory
     Recursive:
     
     > StandardFormatTranscoder.exe -r --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    
+    Output of SFT will be
+    "C:\Users\username\Videos\SFT output: [ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
 
 
 ## Examples
@@ -103,4 +106,4 @@ So standard formatting for a filename is:
 # Compiling
 
 I use PyCharm 2020  
-pyinstaller  --icon=favicon.ico --onefile standard-format-transcoder.py
+pyinstaller  --icon=favicon.ico --onefile StandardFormatTranscoder.py
