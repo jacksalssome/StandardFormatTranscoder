@@ -30,6 +30,11 @@ To find and install ffmpeg and ffprobe under windows:
 6) Click on New and type in "C:\Program Files\ffmpeg" (No Quotes)
 8) Log off and back on, ffmpeg should be working now (can test by typing "ffmpeg" in cmd)
 
+  Under Linux Just inssue the command: 
+  
+  Ubuntu/Debian: sudo apt install ffmpeg  
+  Fedora: sudo dnf install ffmpeg
+
  ## How to run
 
 ###### The Easy way:  
