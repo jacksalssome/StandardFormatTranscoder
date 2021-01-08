@@ -13,7 +13,8 @@
 
 Supported platforms:  
 Windows  
-Linux: coming soon  
+Linux
+
 MacOs: I dont have a Mac :/
 
 ## Installing
