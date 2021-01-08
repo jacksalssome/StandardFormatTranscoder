@@ -123,7 +123,7 @@ if runRecursive == True:
 elif runRecursive == False:
     for filename in os.listdir(directory):
         if filename.endswith(".mkv"):  # Find Any MKV files
-            Path("SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  #Make Dir
+            Path(directory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  #Make Dir
             outputFileName = renameFile(filename)  # Rename File
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFileName  # Where to put the output file
             filenameAndDirectory = directory + fileSlashes + filename  # Absolute path of input file
