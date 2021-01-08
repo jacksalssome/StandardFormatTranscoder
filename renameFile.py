@@ -383,7 +383,7 @@ def renameFile(filename):
         ]
 
     # List duplication checker :)
-    checkForDups(removeStrings)
+    #checkForDups(removeStrings)
 
     removeStringsSorted = (sorted(removeStrings, key=len, reverse=True))
     #print(removeStringsSorted)

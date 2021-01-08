@@ -32,29 +32,25 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
     metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS)
 
     if currentOS == "Linux":
-        print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
         errorCheck = run("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
     elif currentOS == "Windows":
         # Output:
-        print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
         errorCheck = run("cmd /c ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
     if str(errorCheck.stderr) != "b\'\'":  # Integrity and error check
-        print(str(errorCheck.stderr))
-        length = len(Fore.BLUE + "Started: " + filename + Fore.RESET)
-        negLength = len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET)
-        littleSpaces = ' ' * (length - negLength)  # Pack the output with spaces or there will be characters left from the overwritten print
+        print(Fore.YELLOW + str(errorCheck.stderr + Fore.RESET))
+        packingSpaces = ' ' * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
 
-        print(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET + littleSpaces)
+        print(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET + packingSpaces)
         warningFiles += 1
         iterations -= 1  # Remove from successful count
         os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
         return
 
-    length = len(Fore.BLUE + "Starting: " + filename + Fore.RESET)
-    negLength = len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET)
-    spaces = ' ' * (length - negLength)  # Pack the output with spaces or there will be characters left from the overwritten print
+    packingSpaces = ' ' * (len(Fore.BLUE + "Starting: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
 
-    print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + spaces)
+    print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
     return iterations, failedFiles, warningFiles
