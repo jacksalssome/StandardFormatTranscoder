@@ -14,7 +14,9 @@
 Supported platforms:  
 Windows & Linux
 
-MacOs: I dont have a Mac :/
+###Why isn't ffmpeg incuded?
+
+Becuse its a massive package (>90Mib)
 
 ## Installing
 
