@@ -11,7 +11,20 @@
 
 * Removes attachments and cover art
 
-Supported platforms:  
+* Tests integrity and will skip possibly currupted video files.
+
+* Easy to understand error messages: 
+
+      > May Be Corrupted: "[ILoveYou] Another Show 02 [BDRip 1920x1080 x264 FLAC] [A1B2C3D4].mkv"
+
+      > Theres a problem with the input file: "[ILoveYou] Another Show 02 [BDRip 1920x1080 x264 FLAC] [A1B2C3D4].mkv"
+        Possible corruption, incomplete file or permissions problem
+      
+      > Unsupported operating system :(
+      
+      > FFmpeg Is Not Installed :(
+
+##### Supported platforms:  
 Windows & Linux
 
 ##### Why isn't ffmpeg incuded?
