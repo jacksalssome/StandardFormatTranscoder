@@ -114,5 +114,5 @@ So standard formatting for a filename is:
 
 # Compiling
 
-I use PyCharm 2020  (Hard wrap at 270)
+I use PyCharm 2020 (Hard wrap at 270, because i have long single line commands)  
 pyinstaller  --icon=images\favicon.ico --onefile StandardFormatTranscoder.py
