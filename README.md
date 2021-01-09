@@ -60,7 +60,7 @@ You can then just move the exe around from directory to directory
     > StandardFormatTranscoder.exe -r --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
     
     Output of SFT will be:
-    "C:\Users\username\Videos\SFT output: [ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    "C:\Users\username\Videos\SFT output: [ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]\"
     (It also tells you after completion)
 
 
