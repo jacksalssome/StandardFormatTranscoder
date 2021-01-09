@@ -390,6 +390,7 @@ def renameFile(filename):
         "[HEVC x265 8bit]",
         "ITA WEBRip 1080p x265 mkv - iDN CreW",
         "(Batch) v2",
+        "[v2]"
         "[AnimeKayo]",
         "[Marshall]",
         "[kmplx]",
