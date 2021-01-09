@@ -1,11 +1,8 @@
 import os
 from pathlib import Path
-from colorama import init
 from subprocess import run
 from colorama import Fore  # Color in windows and linux
-import sys
 
-from renameFile import renameFile
 from function_getMetadata import getAndSaveMetadata
 from main2 import main2
 

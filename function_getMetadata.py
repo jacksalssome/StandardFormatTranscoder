@@ -1,11 +1,7 @@
-import os
 from prettytable import PrettyTable
 import ffmpeg
 import json
-import re
 from colorama import Fore, Style
-import sys
-from subprocess import run
 
 
 def getAndSaveMetadata(filename, filenameAndDirectory):
@@ -25,14 +21,7 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
     try:
         ffmpegDumps = (json.dumps(ffmpeg.probe(filenameAndDirectory), indent=4))
     except:
-        try:
-            run("ffmpeg -v")
-        except:
-            print(Fore.RED + "FFmpeg Is Not Installed :(" + Fore.RESET)
-            input("Press Enter to exit...")
-            sys.exit()
-
-        print(Fore.RED + "Theres a problem with the input file: " + Fore.RESET + filename)
+        print(Fore.RED + "Theres a problem with the input file: \"" + Fore.RESET + filename + Fore.RED + "\"" + Fore.RESET)
         print(Fore.RED + "Possible corruption, incomplete file or permissions problem" + Fore.RESET)
         return None
 

@@ -4,12 +4,18 @@ from pathlib import Path
 import re
 import platform
 from colorama import init
-from colorama import Fore  # Color in windows and linux
+from colorama import Fore  # Color in Windows and Linux
 import sys
+from subprocess import run
+import subprocess
 import argparse
+
 
 from renameFile import renameFile
 from runProgram import runProgram
+
+
+init()  # Makes sure windows displays colour. KEEP AT TOP
 
 # Check Platform
 if platform.system() == "Linux":
@@ -19,15 +25,20 @@ elif platform.system() == "Windows":
     fileSlashes = "\\"
     currentOS = "Windows"
 else:
-    print("Unsupported operating system")
+    print(Fore.RED + "Unsupported operating system :(" + Fore.RESET)
+    input("Press Enter to exit...")
+    sys.exit()
+# Check for FFmpeg
+try:
+    run("ffmpeg", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+except:
+    print(Fore.RED + "FFmpeg Is Not Installed :(" + Fore.RESET)  # Parent function is runProgram, so gotta pack it.
     input("Press Enter to exit...")
     sys.exit()
 
 # TODO:
 # Add -o --output, so user can specify and output dir
 # Add MP4?
-
-init()  # Stops makes sure windows displays colour
 
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
 
@@ -37,8 +48,13 @@ parser.add_argument('-r', '--recursive', action='store_true', help="Recursively 
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 args, unknown = parser.parse_known_args()
 
-if unknown:
-    print(Fore.YELLOW + "Don't know what this is: " + Fore.RESET + str(unknown))
+if unknown:  # This is wildly complicated for just an error message, but it's art.
+    tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('\])", "", str(unknown))))))
+    if "," + Fore.RESET in tempString:
+        tempString = Fore.YELLOW + "these are: \"" + Fore.RESET + tempString
+    else:
+        tempString = Fore.YELLOW + "this is: \"" + Fore.RESET + tempString
+    print(Fore.YELLOW + "Don't know what " + Fore.RESET + tempString + Fore.YELLOW + "\"" + Fore.RESET)
     print(Fore.YELLOW + "Make sure there are quotes (\"\") around the input and output directory's if there are spaces in it." + Fore.RESET)
     input("Press Enter to exit...")
     sys.exit()
@@ -76,7 +92,7 @@ else:
         elif currentOS == "Linux":
             print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"/home\"")
     else:
-        print(Fore.YELLOW + "Can't find file path: " + Fore.RESET + args.input)
+        print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.input + Fore.YELLOW + "\"" + Fore.RESET)
     input("Press Enter to exit...")
     sys.exit()
 
@@ -104,11 +120,10 @@ if runRecursive == True:
     for root, dirs, files in os.walk(directory):  # find the root, the directories and files.
         for inputFilename in files:  # Iterate over every file
             if inputFilename.endswith(".mkv"):  # If current file is an MKV
-
                 if root.find("SFT output of; " + parentDirectoryName) != -1:  # stop from descending into own output
                     continue
                 inputDirectory = directory
-                inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
+                inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
 
                 if runRename == True:
                     outputFilename = renameFile(inputFilename)  # Call up function renameFile
@@ -128,7 +143,7 @@ if runRecursive == True:
                     sys.exit()
                 except:  # if runProgram gives us an error or warning well jump to the next file
                     continue
-    print("Your files are in: " + outputDirectory + fileSlashes + "*")  # Program is almost done, so we'll make sure the user knows where their files are.
+    print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
 
 elif runRecursive == False:
     for inputFilename in os.listdir(directory):
@@ -154,7 +169,7 @@ elif runRecursive == False:
 
 # Info on number of files processed, warnings and errors
 if iterations != 0:
-    print("Finished", iterations, "files")
+    print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
 elif iterations == 0:
     print("No Files Found")
 if failedFiles != 0:
