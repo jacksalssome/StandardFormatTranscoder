@@ -11,7 +11,7 @@
 
 * Removes attachments and cover art
 
-* Tests integrity and will skip possibly currupted video files.
+* Tests integrity and will skip possibly currupted, incomplete or incorrect permissons in video files.
 
 * Easy to understand error messages: 
 
@@ -21,8 +21,24 @@
         Possible corruption, incomplete file or permissions problem
       
       > Unsupported operating system :(
+        Press Enter to exit...
       
       > FFmpeg Is Not Installed :(
+        Press Enter to exit...
+      
+* Will try to give you hints if you mess up:
+
+      > Don't know what this is: " second half of directory/directory/Tv Show"
+        Make sure there are quotes ("") around the input and output directory's if there are spaces in it.
+        Press Enter to exit...
+        
+      > Cant handle direct files, only the directory they are in.
+        Would you like to covert all files in this directory: "home/username/Videos/Parent directory" ? [Y/N]
+        
+      > Can't run in root of drive, input has to be like: "-i "/home"
+      > Can't run in root of drive, input has to be like: "-i "D:\folder"
+      
+      
 
 ##### Supported platforms:  
 Windows & Linux
