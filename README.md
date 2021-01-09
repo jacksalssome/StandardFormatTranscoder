@@ -20,21 +20,22 @@ Becuse its a massive package (>90Mib)
 
 ## Installing
 
-* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the .exe
+* Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the appropriate binary.
 * Have ffmpeg and ffprobe in the system path
 
-To find and install ffmpeg and ffprobe under windows:
+To Install ffmpeg and ffprobe to the system path under windows:
 1) Download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
 2) extract the zip and go into the bin folder, you'll see ffmpeg.exe, ffplay.exe and ffprobe.exe
 3) copy ffmpeg.exe and ffprobe.exe to C:\Program Files\ffmpeg
 4) Open the start menu and search for SystemPropertiesAdvanced.exe, then click on the "Environment Variables..." button
 5) Under "Sytem variables" click on the Path variable, then click the "Edit.." button
 6) Click on New and type in "C:\Program Files\ffmpeg" (No Quotes)
-8) Log off and back on, ffmpeg should be working now (can test by typing "ffmpeg" in cmd)
+8) Log off and back on, ffmpeg should be working now (can test oping CMD and typing "ffmpeg")
 
   Under Linux Just inssue the command: 
   
   Ubuntu/Debian: sudo apt install ffmpeg  
+  or  
   Fedora: sudo dnf install ffmpeg
 
  ## How to run
@@ -58,8 +59,9 @@ You can then just move the exe around from directory to directory
     
     > StandardFormatTranscoder.exe -r --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
     
-    Output of SFT will be
+    Output of SFT will be:
     "C:\Users\username\Videos\SFT output: [ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    (It also tells you after completion)
 
 
 ## Examples
