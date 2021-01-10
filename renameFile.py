@@ -43,6 +43,8 @@ def renameFile(filename):
         "[HEVC-x265]",
         "1080p.WEB.x264",
         "WEB.x264",
+        "x264"
+        "[x264]"
         "[BD]",
         "[AAC]",
         "Judas",
@@ -110,6 +112,7 @@ def renameFile(filename):
         "[Nep_Blanc]"
         "MULTI VFF",
         "10Bits",
+        "10Bit",
         "T0M",
         "ETTV",
         "BDRemux",
@@ -121,7 +124,6 @@ def renameFile(filename):
         "JPN",
         "]"
         "["
-        "[~AA~]",
         "[Aeenald]",
         "[ANE]",
         "[AnimeCreed]",
@@ -208,7 +210,10 @@ def renameFile(filename):
         "[UNCUT]",
         "[BDremux]",
         "( HT )",
-        "~AA~"
+        "[~AA~]",  # This need to be here for the ascii match below to work for some reason...
+        "~AA~",    #
+        u"\091" u"\126" u"\065" u"\065" u"\126" u"\093",  # Cant Match Tildes so Fuck You (Its equal to [~AA~])
+        u"\126" u"\065" u"\065" u"\126",                  # ~AA~
         "(1080p BluRay x265 HEVC 10bit AAC 7.1 Tigole)",
         "[YTS.LT]",
         ".1080p.BluRay.x264-REGRET[EtHD]",
@@ -216,6 +221,9 @@ def renameFile(filename):
         "(1080p BluRay x265 HEVC 10bit AAC 5.1 Danish+Swedish Silence)",
         "1080p HEVC 10 Bit AC3 5.1 EN Subs EN",
         "BDRip.1080p.selezen",
+        "(Dual Audio_10bit_BD720p)",
+        "[DVDRip h264 720x480 10bit Vorbis]",
+        "Vorbis"
         "[IMAX]",
         "WEB-DLRip.1080p",
         "WEB-DL.1080p",
@@ -539,7 +547,13 @@ def renameFile(filename):
         "h.265",
         "[h.265]",
         "[bonkai77]",
-        "Dual.Audio.Bluray"
+        "Dual.Audio.Bluray",
+        "(1080p BluRay x265 ImE)",
+        "TVRip x265 ImE",
+        "(Pilot)",
+        "TVRip",
+        "(480p TVRip x265 ImE)",
+        "(1080p WEB-DL x265 ImE)",
         ]
 
     # List duplication checker :)
@@ -570,6 +584,11 @@ def renameFile(filename):
     outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
     outputFilename = outputFilename.replace("_", " ")  # _ is usually a stand in for a space
 
+    outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one
+
+    outputFilename = outputFilename.replace("( )", "")  # Remove empty brackets
+    outputFilename = outputFilename.replace("[ ]", "")  # Remove empty brackets
+
     outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994) NOTE: Don't remove years with spaces on both sides
     outputFilename = re.sub("\[[0-9][0-9][0-9][0-9]\]", "", outputFilename)  # [1994]
 
@@ -589,7 +608,7 @@ def renameFile(filename):
     outputFilename = outputFilename.replace(" -", " ")
     outputFilename = outputFilename.replace("- ", " ")
 
-    outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one
+    outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one, yes we do this twice
 
     outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably a ep number
     outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number.

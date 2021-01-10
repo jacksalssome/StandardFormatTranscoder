@@ -15,7 +15,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         return  # Skip this loop were done here
 
     print(Fore.BLUE + "Started: " + filename + Fore.RESET, end='\r')  # Print and return courser to the start of the line
-    print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
+    #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
 
     iterations += 1  # Log how many files we change
 
