@@ -46,7 +46,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', help="\"input filename\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
+parser.add_argument('--removeSubsIfOnlyEngAudio', action='store_true', help="Use the auto rename function")
 args, unknown = parser.parse_known_args()
+
+removeSubsIfOnlyEngAudio = False
+if args.removeSubsIfOnlyEngAudio == True:  # If -r or --recursive is present then enable recursive
+    removeSubsIfOnlyEngAudio = True
+elif args.removeSubsIfOnlyEngAudio == False:
+    removeSubsIfOnlyEngAudio = False
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
     tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('\])", "", str(unknown))))))
@@ -135,7 +142,7 @@ if runRecursive == True:
                 Path(root.replace(directory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS)
+                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS, removeSubsIfOnlyEngAudio)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")

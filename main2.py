@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 from compareSizes import compareSizes
 
 
-def main2(filename, metadataTable, totalNumOfStreams, currentOS):
+def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnlyEngAudio):
 
     # Overview:
 
@@ -32,6 +32,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
     startofengstreams = 0
     currentStreamNum = 0
 
+    # For removeSubsIfOnlyEngAudio
+    numOfEngAudio = 0
+    numOfJpnAudio = 0
+    shadowMetadataOptions = ""
+    shadowMapThisStream = ""
+
     metadataTable2 = PrettyTable(['Index', 'title', 'language', 'codec_type', 'channels'])  # Output Table
     permTitleLang = ""
     PermThisStreamLanguage = ""
@@ -44,11 +50,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
         aLanguageWasFound = False
         thisStreamLanguage = "und"
         mapTheSignsSongsStream = False
+        isASignSongsSubStream = False
 
         # Populate temp variables with data from prettytable
-        metaTitle = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()
-        metaLang = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()
-        metaCodecType = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_type"]).strip()
+        metaTitle = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()).lower()  # .lower() for case insensitive
+        metaLang = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()).lower()
+        metaCodecType = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_type"]).strip()).lower()
         metaChannels = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["channels"]).strip()
 
         #print(metaTitle)
@@ -60,9 +67,10 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
 
         # Handles Audio and subtitles
 
-        if metaTitle.find("Signs") != -1 or metaTitle.find("Songs") != -1:  # Looking for song/signs
+        if metaTitle.find("signs") != -1 or metaTitle.find("songs") != -1:  # Looking for song/signs
             metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=\"Signs / Songs\"")
             signSongsSubStream = lineNum
+            isASignSongsSubStream = True
             aLanguageWasFound = True
             mapTheSignsSongsStream = True
         elif metaLang == "eng":
@@ -70,6 +78,8 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
             thisStreamLanguage = "eng"
             addAudioInfo = True
             aLanguageWasFound = True
+            if metaTitle.find("full subs") != -1 and defaultSubSelected == False:  # if the sub's title is "full subs", then we found your default
+                defaultSubSelected = True
         elif metaLang == "jpn":
             titleLang += "Japanese"
             thisStreamLanguage = "jpn"
@@ -77,13 +87,13 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
             aLanguageWasFound = True
 
         if aLanguageWasFound is False: # If theres no audio tags then check the streams title
-            if metaTitle.find("English") != -1 or metaTitle.find("Inglês") != -1:
+            if metaTitle.find("english") != -1 or metaTitle.find("inglês") != -1:
                 titleLang += "English"
                 thisStreamLanguage = "eng"
                 addAudioInfo = True
                 print("Found Title Via Backup way")
 
-            elif metaTitle.find("Japanese") != -1 or metaTitle.find("Japonês") != -1:
+            elif metaTitle.find("japanese") != -1 or metaTitle.find("Japonês") != -1:
                 titleLang += "Japanese"
                 thisStreamLanguage = "jpn"
                 addAudioInfo = True
@@ -110,11 +120,15 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
             #defaultSubSelected = True
             if startofengstreams == 0:
                 startofengstreams = lineNum
-            numOfEngSubs += 1
+            if isASignSongsSubStream == False:  #Song / Signs is not an Eng Sub
+                numOfEngSubs += 1
             engSubStreams += str(lineNum) + "|"
             engDefaultSubSelectorString = " -disposition:" + str(outputStreamNum) + " default"
         elif metaCodecType == "subtitle" and defaultSubSelected is False:  # Stop FFmpeg from making the first sub stream default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
+        elif metaCodecType == "subtitle" and defaultSubSelected is True:  # eng sub with title "full subs" found, so make it default.
+            engSubStreams += str(lineNum) + "|"
+            engDefaultSubSelectorString = " -disposition:" + str(outputStreamNum) + " default"
 
         titleLang += "\""  # zip up titleLang
 
@@ -133,11 +147,19 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
 
         if metaCodecType.find("video") != -1:  # Add the video stream
             mapThisStream += str(lineNum) + " "
+            shadowMapThisStream += str(lineNum) + " "
             outputStreamNum += 1
 
         if metaCodecType == "audio" and firstAudioStreamNum == -1:
             firstAudioStreamMap = str(outputStreamNum) + "( "
             firstAudioStreamNum = lineNum
+
+        if metaLang.find("english") != -1 and metaCodecType == "audio":
+            numOfEngAudio += 1
+            shadowMapThisStream += str(lineNum) + " "
+            shadowMetadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + titleLang)
+        if metaLang.find("japanese") != -1 and metaCodecType == "audio":
+            numOfJpnAudio += 1
 
         #print(metadataOptions)
         #print(outputStreamNum)
@@ -174,12 +196,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
     # Select the second biggest subtitle by filesize and set it as default
     # second biggest because there might be a close caption
 
-    if numOfEngSubs == 1: # set default if theres only one eng sub
+    if numOfEngSubs == 1 and defaultSubSelected == False:  # set default if theres only one eng sub
         metadataOptions += engDefaultSubSelectorString
         defaultSubSelected = True
         #print(engDefaultSubSelectorString)
         #print(numOfEngSubs)
-    elif numOfEngSubs > 1:
+    elif numOfEngSubs > 1 and defaultSubSelected == False:  # If we found an eng track with title including "full subs" its already default
 
         lineNum = startofengstreams
 
@@ -219,14 +241,21 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS):
             metadataOptions += " -disposition:" + str(secondBiggestStreamNum) + " default"
         defaultSubSelected = True
 
-    if numOfAudioStreams == 0:  # Add an Audio Track if theres no eng/jpn one found
-        mapThisStream += firstAudioStreamMap + " "
-        metadataOptions += " -disposition:" + str(firstAudioStreamNum) + " default"
-        # print(str(firstAudioStreamNum)+"Hi")
+
 
     if signSongsSubStream != -1 and defaultSubSelected is False:  # Add an Sub Track if theres no eng/jpn one found
         mapThisStream = mapThisStream + str(signSongsSubStream) + " "
         metadataOptions += " -disposition:" + str(signSongsSubStream) + " default"
+
+    # For removeSubsIfOnlyEngAudio
+    if numOfEngAudio >= 1 and numOfJpnAudio == 0:  # If theres an Eng Audio and no JPN then:
+        metadataOptions = shadowMetadataOptions  # overwrite metadataOptions with only Eng Audios's
+        mapThisStream = shadowMapThisStream  # overwrite metadataOptions with only Eng Audio's + video stream
+
+    if numOfAudioStreams == 0:  # Add an Audio Track if theres no eng/jpn one found
+        mapThisStream += firstAudioStreamMap + " "
+        metadataOptions += " -disposition:" + str(firstAudioStreamNum) + " default"
+        # print(str(firstAudioStreamNum)+"Hi")
 
     #txtfile = open("Metadata\\"+filename+"(stripped).txt") # map only v:a:s streams, not attachments
 

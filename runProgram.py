@@ -6,7 +6,7 @@ from colorama import Fore  # Color in windows and linux
 from function_getMetadata import getAndSaveMetadata
 from main2 import main2
 
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS):
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, removeSubsIfOnlyEngAudio):
 
     # Check If File Exists
 
@@ -15,6 +15,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         return  # Skip this loop were done here
 
     print(Fore.BLUE + "Started: " + filename + Fore.RESET, end='\r')  # Print and return courser to the start of the line
+    print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
 
     iterations += 1  # Log how many files we change
 
@@ -26,7 +27,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         return
 
     # Process metadata
-    metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS)
+    metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnlyEngAudio)
 
     if currentOS == "Linux":
         #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")

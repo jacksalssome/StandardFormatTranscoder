@@ -240,6 +240,7 @@ def renameFile(filename):
         "[1080p x265 q22 Joy]",
         ".1080p.BluRay.10bit.HEVC.6CH-MkvCage.ws",
         "MkvCage",
+        "[scy]"
         "[1080p x265 q22 FS91 Joy]",
         "[1080p x265 q22 FS87 Joy]",
         "[1080p x265 q22 FS89 Joy]",
@@ -536,6 +537,9 @@ def renameFile(filename):
         "[RAW]",
         "[RUS+JAP]",
         "h.265",
+        "[h.265]",
+        "[bonkai77]",
+        "Dual.Audio.Bluray"
         ]
 
     # List duplication checker :)
@@ -566,11 +570,12 @@ def renameFile(filename):
     outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
     outputFilename = outputFilename.replace("_", " ")  # _ is usually a stand in for a space
 
-    outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994)
+    outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994) NOTE: Don't remove years with spaces on both sides
     outputFilename = re.sub("\[[0-9][0-9][0-9][0-9]\]", "", outputFilename)  # [1994]
 
     outputFilename = re.sub(r"ep ([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep 13 to E13
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
+    outputFilename = re.sub(r"Episode ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
 
     outputFilename = re.sub(r"ep([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep03 to E03
     outputFilename = re.sub(r"ep([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep3 to E03 Haven't seen one with this case, but il code it in anyway
