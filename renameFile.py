@@ -194,7 +194,6 @@ def renameFile(filename):
         "[EMBER]",
         "[Mezashite]",
         "[BD 1080p AAC]",
-        "(1080p x265 q22 FS94 Joy)",
         "FLACx2 2.0x2",
         "(Dual Audio)",
         "[cen]",
@@ -234,7 +233,6 @@ def renameFile(filename):
         "Fratposa",
         ".1080p.WEBRip.x264-ParovozN",
         "ParovozN",
-        "[1080p x265 10bit FS56 Joy]",
         ".1080p.BDRip.10bit.x265.AC3",
         "AC3 5.1 ITA.ENG 1080p H265 sub ita.eng",
         "Sp33dy94-MIRCrew",
@@ -245,17 +243,9 @@ def renameFile(filename):
         ".WEBRip.1080p.DUB+AVO",
         "DUB+AVO",
         "Bluray x265 10Bit AAC 5.1 - GetSchwifty",
-        "[1080p x265 q22 Joy]",
         ".1080p.BluRay.10bit.HEVC.6CH-MkvCage.ws",
         "MkvCage",
         "[scy]"
-        "[1080p x265 q22 FS91 Joy]",
-        "[1080p x265 q22 FS87 Joy]",
-        "[1080p x265 q22 FS89 Joy]",
-        "(1080p x265 q22 FS91 Joy)",
-        "[1080p x265 10bit FS99 Joy]",
-        "[1080p x265 10bit FS71 Joy]",
-        "(1080p x265 S92 Joy)",
         ".iNTERNAL.720p.WEB.x264-GHOSTS",
         ".iNTERNAL.720p.WEB.x264-GHOSTS[eztv]",
         "[eztv]",
@@ -317,8 +307,6 @@ def renameFile(filename):
         ".1080p.BluRay.x265-RARBG",
         "RARBG",
         "-RARBG",
-        "(1080p x265 q22 Joy)",
-        "[1080p AI x265 10bit Joy]",
         ".PROPER.1080p.BluRay.H264.AAC-RARBG",
         "1080p NF Webrip x265 10bit EAC3 5.1 - Ainz",
         "BDRip 1080p x264 AAC - KiNGDOM",
@@ -361,19 +349,11 @@ def renameFile(filename):
         ".1080p.BluRay.x264.AC3-DDL",
         "(1080p AMZN Webrip x265 10bit EAC3 5.1 - Goki)",
         "1080p 10bit Bluray x265 HEVC [Org DD 5.1 Hindi + DD 5.1 English] ESub ~ TombDoc",
-        "[1080p x265 10bit Joy]",
         "(1080p Bluray x265 HEVC 10bit AAC 5.1 Swedish Tigole)",
         "(BD 1080p)(HEVC x265 10bit)(Multi-Subs)-Judas[TGx]",
         "_(10bit_BD1080p_x265)",
         "(10bit_BD1080p_x265)",
         "(480p DVD x265 HEVC 10bit DD5.1 Vyndros)",
-        "(1080p BD x265 10bit FS79 Joy)",
-        "(1080p BD x265 10bit FS73 Joy)",
-        "(1080p BD x265 10bit FS84 Joy)",
-        "(1080p BD x265 10bit FS89 Joy)",
-        "(1080p BD x265 10bit FS87 Joy)",
-        "(1080p BD x265 10bit FS88 Joy)",
-        "(1080p x265 10bit Joy)",
         ".WS.1080p.BluRay.x264.DTS-FGT",
         ".1080p.BluRay.x264-TheWretched [PublicHD]",
         "[PublicHD]",
@@ -381,8 +361,6 @@ def renameFile(filename):
         ".BluRay.1080p.DTS.x264.Millie.Bobby.Brown",
         ".DVD9",
         "DVD9",
-        "(1080p AMZN x265 10bit FS94 Joy)",
-        "(1080p AMZN x265 10bit FS93 Joy)",
         ".720p.HDTVRip",
         ".1080p.WEBRip.x264-RARBG",
         "(BD Batch)",
@@ -554,6 +532,51 @@ def renameFile(filename):
         "TVRip",
         "(480p TVRip x265 ImE)",
         "(1080p WEB-DL x265 ImE)",
+        "[1080p x265 HEVC 10bit BD Dual Audio AAC 5.1] [Prof]",
+        "[1080p x265 HEVC 10bit BD Dual Audio AAC 5.1]",
+        "1080p HEVC AC3 5.1",
+        "[1080p x265 q22",
+        "[1080p AI x265",
+        "[1080p x265 10bit",
+        "[1080p AI x265 10bit",
+        "[1080p x265 10bit Joy]",
+        "(1080p x265 q22 Joy)",
+        "(1080p x265 10bit Joy)",
+        "(1080p BD x265 10bit",
+        "(1080p AMZN x265 10bit",
+        "(1080p x265 q23",
+        "(1080p x265 q22",
+        "(1080p x265 q21",
+        "(1080p x265 q20",
+        "(1080p x265 q19",
+        "(1080p x265 q18",
+        "(1080p x265 HEVC AAC 5.1 Joy)",
+        "[2160p x265 q22",
+        "[2160p AI x265",
+        "[2160p x265 10bit",
+        "[2160p AI x265 10bit",
+        "[2160p x265 10bit Joy]",
+        "(2160p x265 q22 Joy)",
+        "(2160p x265 10bit Joy)",
+        "(2160p BD x265 10bit",
+        "(2160p AMZN x265 10bit",
+        "(2160p x265 q23",
+        "(2160p x265 q22",
+        "(2160p x265 q21",
+        "(2160p x265 q20",
+        "(2160p x265 q19",
+        "(2160p x265 q18",
+        "(2160p x265 HEVC AAC 5.1 Joy)",
+        "2160p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy UTR",
+        "2160p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
+        "1080p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
+        "2160p AMZN WEB DL AI x265 HEVC 10bit AAC 5 1 Joy UTR",
+        "2160p AMZN WEB DL AI x265 HEVC 10bit AAC 5 1 Joy",
+        "1080p AMZN WEB DL AI x265 HEVC 10bit AAC 5 1 Joy",
+        "(2160p AMZN WEB-DL AI x265 HEVC 10bit AAC 5 1 Joy)",
+        "(1080p AMZN WEB-DL AI x265 HEVC 10bit AAC 5 1 Joy)",
+        "(1080p BDRip x265 10bit EAC3 5.1 - Species180) [TAoE]",
+        "(1080p BDRip x265 10bit EAC3 5.1 - Species180)",
         ]
 
     # List duplication checker :)
@@ -578,8 +601,14 @@ def renameFile(filename):
             # only subtracting the positions
             outputFilename = outputFilename[:outputFilenameLower.find(itemLower)] + outputFilename[outputFilenameLower.find(itemLower) + len(item):]
 
-    outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename)  # remove e.g.[ABC12345]
-    outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename)  # remove e.g.(ABC12345)
+    outputFilename = re.sub("FS[0-9][0-9] Joy\]", "", outputFilename, flags=re.I)           # Take this joy
+    outputFilename = re.sub("FS[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)           # And your dumb filenames
+    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\]", "", outputFilename, flags=re.I)      #
+    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\)", "", outputFilename, flags=re.I)      # Yes i did write a regex
+    outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            # for one person
+
+    outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
+    outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename, flags=re.I)  # remove e.g.(ABC12345)
 
     outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
     outputFilename = outputFilename.replace("_", " ")  # _ is usually a stand in for a space
@@ -602,8 +631,8 @@ def renameFile(filename):
     outputFilename = re.sub("- ([0-9][0-9][0-9])$", r" E\1 ", outputFilename)  # Replace "- 001" with E001, why would any have so may episodes, IDK
     outputFilename = re.sub("-([0-9][0-9])$", r" E\1 ", outputFilename)  # Replace -01 If at end of file name
     outputFilename = re.sub("\[([0-9][0-9])\]", r" E\1 ", outputFilename)  # Replace [01] with E01
-    outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename)  # 11x01 to S11E01
-    outputFilename = re.sub("([0-9])x([0-9][0-9])", r" S0\1E\2 ", outputFilename)  # 1x01 to S01E01
+    outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename, flags=re.I)  # 11x01 to S11E01
+    outputFilename = re.sub("([0-9])x([0-9][0-9])", r" S0\1E\2 ", outputFilename, flags=re.I)  # 1x01 to S01E01
 
     outputFilename = outputFilename.replace(" -", " ")
     outputFilename = outputFilename.replace("- ", " ")

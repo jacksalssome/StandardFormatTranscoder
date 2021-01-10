@@ -159,11 +159,11 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
             firstAudioStreamMap = str(outputStreamNum) + "( "
             firstAudioStreamNum = lineNum
 
-        if metaLang.find("english") != -1 and metaCodecType == "audio":
+        if metaLang == "eng" and metaCodecType == "audio":
             numOfEngAudio += 1
             shadowMapThisStream += str(lineNum) + " "
-            shadowMetadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + titleLang)
-        if metaLang.find("japanese") != -1 and metaCodecType == "audio":
+            shadowMetadataOptions += (" -metadata:s:" + str(outputStreamNum - 1) + " title=" + titleLang)
+        if metaLang == "jpn" or metaTitle.find("japanese") != -1 and metaCodecType == "audio":
             numOfJpnAudio += 1
 
         #print(metadataOptions)
@@ -253,7 +253,8 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
         metadataOptions += " -disposition:" + str(signSongsSubStream) + " default"
 
     # For removeSubsIfOnlyEngAudio
-    if numOfEngAudio >= 1 and numOfJpnAudio == 0:  # If theres an Eng Audio and no JPN then:
+    if numOfEngAudio >= 1 and numOfJpnAudio == 0 and removeSubsIfOnlyEngAudio is True:  # If theres an Eng Audio and no JPN then:
+        #print("removeSubsIfOnlyEngAudio Is On")
         metadataOptions = shadowMetadataOptions  # overwrite metadataOptions with only Eng Audios's
         mapThisStream = shadowMapThisStream  # overwrite metadataOptions with only Eng Audio's + video stream
 
