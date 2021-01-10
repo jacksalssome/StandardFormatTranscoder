@@ -51,6 +51,7 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
         thisStreamLanguage = "und"
         mapTheSignsSongsStream = False
         isASignSongsSubStream = False
+        makeThisSubDefault = False
 
         # Populate temp variables with data from prettytable
         metaTitle = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()).lower()  # .lower() for case insensitive
@@ -78,7 +79,8 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
             thisStreamLanguage = "eng"
             addAudioInfo = True
             aLanguageWasFound = True
-            if metaTitle.find("full subs") != -1 and defaultSubSelected == False:  # if the sub's title is "full subs", then we found your default
+            if metaTitle.find("full subs") != -1 and defaultSubSelected is False:  # if the sub's title is "full subs", then we found your default
+                makeThisSubDefault = True
                 defaultSubSelected = True
         elif metaLang == "jpn":
             titleLang += "Japanese"
@@ -86,7 +88,7 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
             addAudioInfo = True
             aLanguageWasFound = True
 
-        if aLanguageWasFound is False: # If theres no audio tags then check the streams title
+        if aLanguageWasFound is False:  # If theres no audio tags then check the streams title
             if metaTitle.find("english") != -1 or metaTitle.find("inglês") != -1:
                 titleLang += "English"
                 thisStreamLanguage = "eng"
@@ -124,11 +126,11 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
                 numOfEngSubs += 1
             engSubStreams += str(lineNum) + "|"
             engDefaultSubSelectorString = " -disposition:" + str(outputStreamNum) + " default"
-        elif metaCodecType == "subtitle" and defaultSubSelected is False:  # Stop FFmpeg from making the first sub stream default
+        elif metaCodecType == "subtitle" and makeThisSubDefault is False:  # Stop FFmpeg from making the first sub stream default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
-        elif metaCodecType == "subtitle" and defaultSubSelected is True:  # eng sub with title "full subs" found, so make it default.
-            engSubStreams += str(lineNum) + "|"
-            engDefaultSubSelectorString = " -disposition:" + str(outputStreamNum) + " default"
+        elif makeThisSubDefault is True:
+            metadataOptions += " -disposition:" + str(outputStreamNum) + " default"  # "full subs" found, make it default
+            makeThisSubDefault = False
 
         titleLang += "\""  # zip up titleLang
 
@@ -196,13 +198,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
     # Select the second biggest subtitle by filesize and set it as default
     # second biggest because there might be a close caption
 
-    if numOfEngSubs == 1 and defaultSubSelected == False:  # set default if theres only one eng sub
+    if numOfEngSubs == 1 and defaultSubSelected is False:  # set default if theres only one eng sub
         metadataOptions += engDefaultSubSelectorString
         defaultSubSelected = True
         #print(engDefaultSubSelectorString)
         #print(numOfEngSubs)
-    elif numOfEngSubs > 1 and defaultSubSelected == False:  # If we found an eng track with title including "full subs" its already default
-
+    elif numOfEngSubs > 1 and defaultSubSelected is False:  # If we found an eng track with title including "full subs" its already default
         lineNum = startofengstreams
 
         #print("here2")
@@ -246,7 +247,6 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
     if signSongsSubStream != -1 and defaultSubSelected is False:  # Add an Sub Track if theres no eng/jpn one found
         mapThisStream = mapThisStream + str(signSongsSubStream) + " "
         metadataOptions += " -disposition:" + str(signSongsSubStream) + " default"
-
     # For removeSubsIfOnlyEngAudio
     if numOfEngAudio >= 1 and numOfJpnAudio == 0:  # If theres an Eng Audio and no JPN then:
         metadataOptions = shadowMetadataOptions  # overwrite metadataOptions with only Eng Audios's
