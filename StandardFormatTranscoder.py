@@ -131,7 +131,6 @@ if runRecursive == True:
                     continue
                 inputDirectory = directory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
-
                 if runRename == True:
                     outputFilename = renameFile(inputFilename)  # Call up function renameFile
                 else:
