@@ -22,7 +22,6 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
 
     numOfAudioStreams = 0  # Make sure theres at
     firstAudioStreamNum = -1  # lease one Audio Track
-    signSongsSubStream = -1
     firstAudioStreamMap = ""  # For adding sub/signs if its the only sub track
     lineNum = 0
     metadataOptions = ""
@@ -32,6 +31,10 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
     startofengstreams = 0
     currentStreamNum = 0
     mapThisStreamIfNoSubsFound = ""
+
+    signSongsSubStream = -1
+    firstNonSongsSignsStreamMap = ""
+    firstNonSongsSignsStreamNum = -1
 
     # For removeSubsIfOnlyEngAudio
     numOfEngAudio = 0
@@ -156,8 +159,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
             outputStreamNum += 1
 
         if metaCodecType == "audio" and firstAudioStreamNum == -1:
-            firstAudioStreamMap = str(outputStreamNum) + "( "
+            firstAudioStreamMap = str(outputStreamNum) + " "
             firstAudioStreamNum = lineNum
+
+        if metaCodecType == "subtitle" and firstNonSongsSignsStreamNum == -1:
+            firstNonSongsSignsStreamMap = str(outputStreamNum) + " "
+            firstNonSongsSignsStreamNum = lineNum
 
         if metaLang == "eng" and metaCodecType == "audio":
             numOfEngAudio += 1
@@ -246,9 +253,12 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
             metadataOptions += " -disposition:" + str(secondBiggestStreamNum) + " default"
         defaultSubSelected = True
 
+    if defaultSubSelected is False and numOfJpnAudio >= 1:  # Add first non sign/Songs Stream and make it default if no subs are found, If theres a jap audio track
+        firstNonSongsSignsStreamMap = mapThisStream + str(signSongsSubStream) + " "
+        firstNonSongsSignsStreamNum += " -disposition:" + str(signSongsSubStream) + " default"
+        metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
 
-
-    if signSongsSubStream != -1 and defaultSubSelected is False:  # Add an Sub Track if theres no eng/jpn one found
+    elif signSongsSubStream != -1 and defaultSubSelected is False:  # Add an Sub Track if theres no eng/jpn one found
         mapThisStream = mapThisStream + str(signSongsSubStream) + " "
         metadataOptions += " -disposition:" + str(signSongsSubStream) + " default"
 
@@ -258,7 +268,7 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
         metadataOptions = shadowMetadataOptions  # overwrite metadataOptions with only Eng Audios's
         mapThisStream = shadowMapThisStream  # overwrite metadataOptions with only Eng Audio's + video stream
 
-    if numOfAudioStreams == 0:  # Add an Audio Track if theres no eng/jpn one found
+    if numOfAudioStreams == 0:  # Add the first Audio Track if theres no eng/jpn one found
         mapThisStream += firstAudioStreamMap.replace("(", "") + " "
         metadataOptions += " -disposition:" + str(firstAudioStreamNum) + " default"
         # print(str(firstAudioStreamNum)+"Hi")
