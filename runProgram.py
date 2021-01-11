@@ -48,7 +48,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
         return
 
-    packingSpaces = ' ' * (len(Fore.BLUE + "Starting: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
+    packingSpaces = ' ' * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
 
     print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
     return iterations, failedFiles, warningFiles
