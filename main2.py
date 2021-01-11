@@ -259,10 +259,9 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
         mapThisStream = shadowMapThisStream  # overwrite metadataOptions with only Eng Audio's + video stream
 
     if numOfAudioStreams == 0:  # Add an Audio Track if theres no eng/jpn one found
-        mapThisStream += firstAudioStreamMap + " "
+        mapThisStream += firstAudioStreamMap.replace("(", "") + " "
         metadataOptions += " -disposition:" + str(firstAudioStreamNum) + " default"
         # print(str(firstAudioStreamNum)+"Hi")
-
     #txtfile = open("Metadata\\"+filename+"(stripped).txt") # map only v:a:s streams, not attachments
 
     numberOfMaps = ""
@@ -285,6 +284,7 @@ def main2(filename, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnl
     metadataAndMaps = metadataOptions+numberOfMaps
 
     # Preview Output
+    # NOTE: IF IT'S NOT ANIME IT MIGHT NOW SHOW CORRECTLY
     #print("")
     #print("+-------+------------Output Preview-+------------+----------+")
     #print(metadataTable2.get_string())

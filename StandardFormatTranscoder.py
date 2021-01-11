@@ -126,15 +126,15 @@ if runRecursive == True:
     outputDirectory = str(Path(directory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
     for root, dirs, files in os.walk(directory):  # find the root, the directories and files.
         for inputFilename in files:  # Iterate over every file
-            if inputFilename.endswith(".mkv"):  # If current file is an MKV
+            if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".mp4"):  # If current file is an MKV, MP4 or M4V
                 if root.find("SFT output of; " + parentDirectoryName) != -1:  # stop from descending into own output
                     continue
                 inputDirectory = directory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
                 if runRename == True:
-                    outputFilename = renameFile(inputFilename)  # Call up function renameFile
+                    outputFilename = renameFile(inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
-                    outputFilename = inputFilename
+                    outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .mkv or .mp4 etc and replace with .mkv
                 outputFilenameAndDirectory = root.replace(directory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
 
                 # Make the top directory "SFT output; <Selected folder>":
@@ -159,7 +159,7 @@ elif runRecursive == False:
             if runRename == True:  # Rename File
                 outputFilename = renameFile(inputFilename)  # Call up function renameFile
             else:  # keep file name
-                outputFilename = inputFilename
+                outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
 
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
             inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
