@@ -8,18 +8,21 @@ import re
 from function_getMetadata import getAndSaveMetadata
 from function_addMetadataAndMaps import addMetadataAndMaps
 
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, engAudioNoSubs):
+
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite):
 
     # Check If File Exists
 
-    if os.path.isfile(outputFileNameAndDirectory):
-        print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
-        return iterations, failedFiles, warningFiles  # Skip this loop were done here
-
+    if forceOverwrite is False:
+        if os.path.isfile(outputFileNameAndDirectory):
+            print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
+            return iterations, failedFiles, warningFiles  # Skip this loop were done here
 
     print(Fore.BLUE + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
     #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
-
+    overwriteOption = "-n"
+    if forceOverwrite is True:
+        overwriteOption = "-y"
     iterations += 1  # Log how many files we change
 
     try:  # Skip loop if theres a problem with the file
@@ -39,12 +42,12 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
 
     if currentOS == "Linux":
         #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
-        errorCheck = run("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+        errorCheck = run("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
     elif currentOS == "Windows":
         # Output:
-        print("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
-        errorCheck = run("cmd /c ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+        #print("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
         if len(str(errorCheck.stderr)) > 8:  # Integrity and error check
             if str(errorCheck.stderr).find("Referenced QT chapter track not found") != -1:

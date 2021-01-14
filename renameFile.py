@@ -122,8 +122,6 @@ def renameFile(filename):
         "[AAC]"
         "ENG",
         "JPN",
-        "]"
-        "["
         "[Aeenald]",
         "[ANE]",
         "[AnimeCreed]",
@@ -247,7 +245,8 @@ def renameFile(filename):
         "Bluray x265 10Bit AAC 5.1 - GetSchwifty",
         ".1080p.BluRay.10bit.HEVC.6CH-MkvCage.ws",
         "MkvCage",
-        "[scy]"
+        "[scy]",
+        "Scy",
         ".iNTERNAL.720p.WEB.x264-GHOSTS",
         ".iNTERNAL.720p.WEB.x264-GHOSTS[eztv]",
         "[eztv]",
