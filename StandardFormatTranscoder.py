@@ -181,8 +181,6 @@ elif runRecursive == False:
 # Info on number of files processed, warnings and errors
 if iterations != 0:
     print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
-elif iterations == 0:
-    print("No Files Found")
 if failedFiles != 0:
     print(Fore.RED + str(failedFiles) + " Failed" + Fore.RESET)
 if warningFiles != 0:

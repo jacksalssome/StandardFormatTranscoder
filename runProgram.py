@@ -34,11 +34,12 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
 
     # Process metadata
     metadataAndMaps, foreignWarning = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs)
+
     if foreignWarning is True:
-        print(Fore.Yellow + "There was no English Subtitles to go with Foreign Audio: " + outputFileName + Fore.RESET)
+        print(Fore.YELLOW + "There was no English Subtitles to go with Foreign Audio: " + outputFileName + Fore.RESET)
         warningFiles += 1
         iterations -= 1
-        return iterations, failedFiles, warningFiles  # Skip this loop were done here
+        #return iterations, failedFiles, warningFiles  # Skip this loop were done here
 
     if currentOS == "Linux":
         #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
@@ -53,12 +54,15 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
             if str(errorCheck.stderr).find("Referenced QT chapter track not found") != -1:
                 print(filename + Fore.YELLOW + " Was a non standard file" + Fore.RESET)
             else:
-                errorOutput = re.sub("b\'", "", str(errorCheck.stderr))
+                errorOutput = re.sub("b\"", "", str(errorCheck.stderr))
+                errorOutput = re.sub("b\'", "", errorOutput)
                 errorOutput = re.sub(r"\\r\\n\'", "", errorOutput)
+                errorOutput = re.sub(r"\\r\\n\"", "", errorOutput)
+                errorOutput = re.sub(r"\\r\\n", "", errorOutput)
                 print(Fore.YELLOW + "FFmpeg Error: " + "\"" + Fore.RESET + errorOutput + Fore.YELLOW + "\"" + Fore.RESET)
 
                 packingSpaces = ' ' * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
-                print(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET + packingSpaces)
+                print(Fore.YELLOW + "May Be Corrupted: " + Fore.RESET + filename + Fore.YELLOW + ", so it was not copied" + Fore.RESET + packingSpaces)
                 warningFiles += 1
                 iterations -= 1  # Remove from successful count
                 try:
