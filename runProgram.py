@@ -37,8 +37,10 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         # Output:
         #print("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
         errorCheck = run("cmd /c ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+        #TODO: FIX DONE OUTPUT WITH MP4 FILES "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001a81b92dac0] Referenced QT chapter track not found"
 
     if str(errorCheck.stderr) != "b\'\'":  # Integrity and error check
+        print("")
         print(Fore.YELLOW + str(errorCheck.stderr + Fore.RESET))
         packingSpaces = ' ' * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
 
@@ -48,7 +50,8 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
         return
 
-    packingSpaces = ' ' * (len(Fore.BLUE + "Starting: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
+    packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
 
     print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
+    print("")
     return iterations, failedFiles, warningFiles

@@ -232,6 +232,8 @@ def renameFile(filename):
         ".ITA.ENG.BDrip.1080p.x264-Fratposa",
         "Fratposa",
         ".1080p.WEBRip.x264-ParovozN",
+        "1080p.WEBRip.x264 - [YTS.AM]",
+        "1080p.WEBRip.x264",
         "ParovozN",
         ".1080p.BDRip.10bit.x265.AC3",
         "AC3 5.1 ITA.ENG 1080p H265 sub ita.eng",
@@ -589,7 +591,7 @@ def renameFile(filename):
 
     #breakpoint()
 
-    outputFilename = filename.replace(str(".mkv"), "")
+    outputFilename = filename[:-4]  # Remove last 4 characters = .mkv or .mp4 etc
 
     for item in removeStringsSorted:
 
@@ -603,9 +605,10 @@ def renameFile(filename):
 
     outputFilename = re.sub("FS[0-9][0-9] Joy\]", "", outputFilename, flags=re.I)           # Take this joy
     outputFilename = re.sub("FS[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)           # And your dumb filenames
-    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\]", "", outputFilename, flags=re.I)      #
     outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\)", "", outputFilename, flags=re.I)      # Yes i did write a regex
+    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\]", "", outputFilename, flags=re.I)      #
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            # for one person
+    outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            #
 
     outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
     outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename, flags=re.I)  # remove e.g.(ABC12345)
@@ -631,8 +634,12 @@ def renameFile(filename):
     outputFilename = re.sub("- ([0-9][0-9][0-9])$", r" E\1 ", outputFilename)  # Replace "- 001" with E001, why would any have so may episodes, IDK
     outputFilename = re.sub("-([0-9][0-9])$", r" E\1 ", outputFilename)  # Replace -01 If at end of file name
     outputFilename = re.sub("\[([0-9][0-9])\]", r" E\1 ", outputFilename)  # Replace [01] with E01
+
     outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename, flags=re.I)  # 11x01 to S11E01
     outputFilename = re.sub("([0-9])x([0-9][0-9])", r" S0\1E\2 ", outputFilename, flags=re.I)  # 1x01 to S01E01
+
+    outputFilename = re.sub("(S[0-9][0-9]E[0-9][0-9]) -", r"\1", outputFilename, flags=re.I)  # Removes space + Hyphen (S11E01 -)
+    outputFilename = re.sub(" - (S[0-9][0-9]E[0-9][0-9])", r" \1", outputFilename, flags=re.I)  # Removes space + Hyphen + space ( - S11E01) to ( S11E01)
 
     outputFilename = outputFilename.replace(" -", " ")
     outputFilename = outputFilename.replace("- ", " ")
