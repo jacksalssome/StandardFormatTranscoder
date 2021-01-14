@@ -4,9 +4,9 @@ from subprocess import run
 from colorama import Fore  # Color in windows and linux
 
 from function_getMetadata import getAndSaveMetadata
-from main2 import main2
+from function_addMetadataAndMaps import addMetadataAndMaps
 
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, removeSubsIfOnlyEngAudio):
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, engAudioNoSubs):
 
     # Check If File Exists
 
@@ -27,7 +27,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         return
 
     # Process metadata
-    metadataAndMaps = main2(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, removeSubsIfOnlyEngAudio)
+    metadataAndMaps = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs)
 
     if currentOS == "Linux":
         #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
