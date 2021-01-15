@@ -8,7 +8,6 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     mapThisStream = []  # Don't add streams non eng/jpn streams
     outputStreamNum = 0  # apply the metadata to the final stream number for ffmpeg will forget when it maps the streams "Stream #0:12 -> #0:3 (copy)"
-    lineNum = 0
 
     metadataOptions = ""
 
@@ -17,13 +16,18 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     firstAudioStreamLang = ""
     firstAudioStreamTitle = ""
     firstAudioFound = False  # For adding sub/signs if its the only sub track
+    firstAudioStreamNum = -1
     signSongsStream = []
     listOfEngSubs = []
+    titleOfEngSubs = []
+    langOfEngSubs = []
     mapThisStreamIfNoSubsFound = []
     definiteDefaultSubFound = False
     japAudioFound = False
 
-    for line in range(0, totalNumOfStreams):
+    foreignWarning = False
+
+    for lineNum in range(0, totalNumOfStreams):
         addAudioInfo = True
         titleLang = "\""
 
@@ -37,9 +41,9 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
         if metaTitle.find("signs") != -1 or metaTitle.find("songs") != -1:
             titleLang += "Signs / Songs"
-            metaLang = "und"  # Well und signs/song
-        elif metaLang == "eng":
-            titleLang += "English"
+            metaLang = "und"  # We'll und signs/song
+        elif metaLang == "jpn":
+            titleLang += "Japanese"
         elif metaLang == "eng":
             titleLang += "English"
         else:  # no eng/jpn found though language tags, check titles:
@@ -52,13 +56,18 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                 metaLang = "jpn"
                 print("Found Title Via Backup way")
             else:  # No eng or jpn found:
+                metaLang = "und"
                 addAudioInfo = False
                 aLanguageWasFound = False
 
+        # Closed Captioning
+        if metaTitle.find("[cc]") != -1 or metaTitle.find("(cc)") != -1:
+            titleLang += " (CC)"
+
         if metaTitle.find("full subs") != -1 or metaTitle.find("full subtitle") != -1 and defaultSubSelected is False:  # if the sub's title is "full subs", then we found your default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
+            titleLang = "\"English, Full Subtitles"  # We'll rename for this
             definiteDefaultSubFound = True
-            makeThisSubDefault = True
 
         if addAudioInfo is True:
             if metaChannels == "2":
@@ -88,13 +97,15 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
 
         if defaultSubSelected is False and metaCodecType == "subtitle" and metaLang == "eng":  # Check if first Eng Sub and set as default
-            defaultAudioSelected = True
             listOfEngSubs.append(lineNum)
+            titleOfEngSubs.append(titleLang)
+            langOfEngSubs.append(metaLang)
+            outputStreamNum += 1
+        elif titleLang == "\"Signs / Songs\"":
+            signSongsStream.append(outputStreamNum)
+            outputStreamNum += 1
         elif defaultSubSelected is False and metaCodecType == "subtitle" and metaLang == "und":
-            if titleLang == "Signs / Songs":
-                signSongsStream.append(lineNum)
-            else:
-                mapThisStreamIfNoSubsFound.append(lineNum)
+            mapThisStreamIfNoSubsFound.append(lineNum)
 
         # ---- ADDING METADATA ----
 
@@ -102,34 +113,62 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             mapThisStream.append(lineNum)
             outputStreamNum += 1  # A stream has been definitely added to the output
 
-        if metaTitle != "und":  # Don't title non eng/jpn (all stream com in as und and were renamed earlier)
-            if metaCodecType != "video":  # Don't title video streams
-                metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + titleLang)
-                metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " language=" + metaLang)
-                mapThisStream.append(lineNum)
-                outputStreamNum += 1
-
-        if metaCodecType == "audio" and firstAudioFound is False and titleLang == "und":  # Incase there is no jap audio
+        if metaLang != "und":  # Don't title non eng/jpn (all stream com in as und and were renamed earlier)
+            if metaCodecType != "video":  # Don't title video streams or
+                if metaCodecType == "subtitle" and metaLang != "eng" or metaCodecType == "audio" and metaLang == "jpn":  # Don't add english subs, they will come later
+                    metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + titleLang)
+                    metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " language=" + metaLang)
+                    mapThisStream.append(lineNum)
+                    outputStreamNum += 1
+        if metaCodecType == "audio" and firstAudioFound is False and metaLang == "und":  # Incase there is no jap audio
             firstAudioFound = True
-            firstAudioStreamLang = metaTitle
-        elif metaCodecType == "audio" and firstAudioStreamLang == "und" and titleLang == "eng":  # Rather have eng audio then und
+            firstAudioStreamLang = metaLang
+            firstAudioStreamNum = lineNum
+        elif metaCodecType == "audio" and firstAudioStreamLang == "und" and metaLang == "eng":  # Rather have eng audio then und
             firstAudioFound = True
             firstAudioStreamTitle = metaTitle
             firstAudioStreamLang = metaLang
+            firstAudioStreamNum = lineNum
 
     # ---- END FOR LOOP ----
 
-    # IF MUTIPLE ENG SUBS FOUND
-    # Select the second biggest subtitle by filesize and set it as default
-    # second biggest because there might be a close caption
-
     if japAudioFound is False and firstAudioStreamLang == "eng" and engAudioNoSubs is True:
         definiteDefaultSubFound = True
+        # -- ADD ENGLISH SUBS --
+    elif japAudioFound is True and len(listOfEngSubs) >= 1:
+        for num in range(0, len(listOfEngSubs)):
+            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " title=" + str(titleOfEngSubs[num]))
+            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " language=" + str(langOfEngSubs[num]))
+            mapThisStream.append(listOfEngSubs[num])
 
+    if japAudioFound is False and firstAudioStreamNum != -1:  # No jpn audio was found, so add the first audio stream, or the first eng audio
+        mapThisStream.append(firstAudioStreamNum)
+        metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
+        metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " language=" + firstAudioStreamLang)
+        metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + firstAudioStreamTitle)
+
+    if len(listOfEngSubs) >= 1 and firstAudioStreamLang == "und":
+        for num in range(0, len(listOfEngSubs)):
+            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " title=" + str(titleOfEngSubs[num]))
+            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " language=" + str(langOfEngSubs[num]))
+            mapThisStream.append(listOfEngSubs[num])
+    elif len(listOfEngSubs) == 0 and firstAudioStreamLang == "und":
+        mapThisStream.append(mapThisStreamIfNoSubsFound[0])
+
+    if len(signSongsStream) != 0:  # Add a sign/song Tracks, make it default if theres no eng/jpn one found
+        for item in signSongsStream:
+            mapThisStream.append(item)
+            metadataOptions += (" -metadata:s:" + str(item) + " title=\"Signs/Songs\"" )
+            if defaultSubSelected is False:  # Only add the first sign/songs
+                metadataOptions += " -disposition:" + str(item) + " default"
+                defaultSubSelected = True
+
+    # ---- Choose Default sub if more then one english sub ----
+    # Also handles detection of foreign audio without an english sub
     if definiteDefaultSubFound is False:
         if len(listOfEngSubs) == 0 and firstAudioStreamLang == "und":
-            print("No ENG sub to a Forign Audio found")
-            breakpoint()
+            # No English Subs to go with a foreign audio stream
+            foreignWarning = True
         elif len(listOfEngSubs) == 1:  # set default if theres only one eng sub
             defaultSubSelected = True
             metadataOptions += " -disposition:" + str(listOfEngSubs[0]) + " default"
@@ -141,9 +180,9 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             secondBiggestStreamNum = 0
             selBiggestStream = False
 
-            for item in listOfEngSubs:  # Start iterating from the first sub
+            for num in range(0, len(listOfEngSubs)):  # Start iterating from the first sub
 
-                streamSize = compareSizes(item, filename, currentOS)
+                streamSize = compareSizes(num, filename, currentOS)
 
                 if len(listOfEngSubs) == 2:  # Just select the biggest if theres only 2 subs
                     selBiggestStream = True
@@ -164,22 +203,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                 metadataOptions += " -disposition:" + str(secondBiggestStreamNum) + " default"
             defaultSubSelected = True
 
-    if len(signSongsStream) != 0 and defaultSubSelected is False:  # Add an Sub Track if theres no eng/jpn one found
-        for item in signSongsStream:
-            mapThisStream += str(item) + " "
-            if defaultSubSelected is False:  # Only add the first sign/songs
-                metadataOptions += " -disposition:" + str(item) + " default"
-                defaultSubSelected = True
-
-    if japAudioFound is False:  # No jpn audio was found, so add the first audio stream, or the first eng audio
-
-        mapThisStream.append(outputStreamNum)
-        metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
-        metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " language=" + firstAudioStreamLang)
-        metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + firstAudioStreamTitle)
-
     outputMaps = ""
-
     for item in mapThisStream:
         outputMaps += " -map 0:" + str(item)  # -map 0:3
         # Could add prettyTables here and only print the index with item (number)
@@ -189,4 +213,4 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     # Print(outputTable.get_string())
 
-    return metadataAndMaps
+    return metadataAndMaps, foreignWarning

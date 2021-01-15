@@ -41,6 +41,7 @@ except:
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
 parser.add_argument('-i', '--input', help="\"input filename\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
@@ -52,6 +53,12 @@ if args.engAudioNoSubs == True:  # If -r or --recursive is present then enable r
     engAudioNoSubs = True
 elif args.engAudioNoSubs == False:
     engAudioNoSubs = False
+
+forceOverwrite = False
+if args.force == True:  # If -r or --recursive is present then enable recursive
+    forceOverwrite = True
+elif args.force == False:
+    forceOverwrite = False
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
     tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('\])", "", str(unknown))))))
@@ -139,11 +146,11 @@ if runRecursive == True:
                 Path(root.replace(directory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS, engAudioNoSubs)
+                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
-                    os.remove(Path(outputFilenameAndDirectory))  # Delete the file since its not done
+                    os.remove(Path(outputFilenameAndDirectory))  # Delete the file since its not completed
                     sys.exit()
                 except:  # if runProgram gives us an error or warning well jump to the next file
                     continue
@@ -162,20 +169,18 @@ elif runRecursive == False:
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
             inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS)
+                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
                 os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its not done
                 sys.exit()
-            except:  # if runProgram gives us an error or warning well jump to the next file
-                continue
+            #except:  # if runProgram gives us an error or warning well jump to the next file
+                #continue
 
 # Info on number of files processed, warnings and errors
 if iterations != 0:
     print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
-elif iterations == 0:
-    print("No Files Found")
 if failedFiles != 0:
     print(Fore.RED + str(failedFiles) + " Failed" + Fore.RESET)
 if warningFiles != 0:
