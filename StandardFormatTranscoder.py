@@ -9,6 +9,7 @@ import sys
 from subprocess import run
 import subprocess
 import argparse
+# Local Files
 from renameFile import renameFile
 from runProgram import runProgram
 
@@ -47,18 +48,6 @@ parser.add_argument('-r', '--recursive', action='store_true', help="Recursively 
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
 args, unknown = parser.parse_known_args()
-
-engAudioNoSubs = False
-if args.engAudioNoSubs == True:  # If -r or --recursive is present then enable recursive
-    engAudioNoSubs = True
-elif args.engAudioNoSubs == False:
-    engAudioNoSubs = False
-
-forceOverwrite = False
-if args.force == True:  # If -r or --recursive is present then enable recursive
-    forceOverwrite = True
-elif args.force == False:
-    forceOverwrite = False
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
     tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('\])", "", str(unknown))))))
@@ -109,12 +98,22 @@ else:
     input("Press Enter to exit...")
     sys.exit()
 
-runRecursive = False
+
+if args.engAudioNoSubs == True:  # If -r or --recursive is present then enable recursive
+    engAudioNoSubs = True
+elif args.engAudioNoSubs == False:
+    engAudioNoSubs = False
+
+if args.force == True:  # If -r or --recursive is present then enable recursive
+    forceOverwrite = True
+elif args.force == False:
+    forceOverwrite = False
+
 if args.recursive == True:  # If -r or --recursive is present then enable recursive
     runRecursive = True
 elif args.recursive == False:
+    runRecursive = False
 
-runRename = False
 if args.rename == True:  # If --rename present, then enable auto renaming
     runRename = True
 elif args.rename == False:
@@ -125,28 +124,30 @@ elif args.rename == False:
 iterations = 0
 failedFiles = 0
 warningFiles = 0
+infos = 0
 
 if runRecursive == True:
     parentDirectoryName = basename(directory)
     outputDirectory = str(Path(directory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
     for root, dirs, files in os.walk(directory):  # find the root, the directories and files.
         for inputFilename in files:  # Iterate over every file
-            if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".mp4"):  # If current file is an MKV, MP4 or M4V
+            if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # If current file is an MKV, MP4 or M4V
                 if root.find("SFT output of; " + parentDirectoryName) != -1:  # stop from descending into own output
                     continue
+
                 inputDirectory = directory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
                 if runRename == True:
                     outputFilename = renameFile(inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
-                    outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .mkv or .mp4 etc and replace with .mkv
+                    outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
                 outputFilenameAndDirectory = root.replace(directory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
 
                 # Make the top directory "SFT output; <Selected folder>":
                 Path(root.replace(directory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
+                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
@@ -158,7 +159,7 @@ if runRecursive == True:
 
 elif runRecursive == False:
     for inputFilename in os.listdir(directory):
-        if inputFilename.endswith(".mkv"):  # Find Any MKV files
+        if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
             Path(directory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
 
             if runRename == True:  # Rename File
@@ -169,7 +170,7 @@ elif runRecursive == False:
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
             inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
+                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
@@ -181,6 +182,9 @@ elif runRecursive == False:
 # Info on number of files processed, warnings and errors
 if iterations != 0:
     print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
+
+if infos != 0:
+    print(Fore.RED + str(infos) + " Info's" + Fore.RESET)
 if failedFiles != 0:
     print(Fore.RED + str(failedFiles) + " Failed" + Fore.RESET)
 if warningFiles != 0:
