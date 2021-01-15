@@ -23,6 +23,9 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     listOfEngSubs = []
     titleOfEngSubs = []
     langOfEngSubs = []
+    listOfEngAudios = []
+    titleOfEngAudios = []
+    langOfEngAudios = []
     mapThisStreamIfNoSubsFound = []
     definiteDefaultSubFound = False
     japAudioFound = False
@@ -32,7 +35,6 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     for lineNum in range(0, totalNumOfStreams):
         addAudioInfo = True
         titleLang = "\""
-
         # Populate temp variables with data from prettytable
         metaTitle = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()).lower()  # .lower() for case insensitive
         metaLang = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()).lower()
@@ -99,6 +101,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
         elif metaCodecType == "audio" and defaultAudioSelected is False and metaLang == "jpn":  # Make all other audio stream's not default
             metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
+        elif metaCodecType == "audio" and metaLang == "eng":
+            listOfEngAudios.append(lineNum)
+            titleOfEngAudios.append(titleLang)
+            langOfEngAudios.append(metaLang)
+            outputStreamNum += 1
 
         if defaultSubSelected is False and metaCodecType == "subtitle" and metaLang == "eng":  # Check if first Eng Sub and set as default
             listOfEngSubs.append(lineNum)
@@ -136,6 +143,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             firstAudioStreamNum = lineNum
             firstAudiooutputStreamNum = outputStreamNum
 
+
     # ---- END FOR LOOP ----
 
     if japAudioFound is False and firstAudioStreamLang == "eng" and engAudioNoSubs is True:
@@ -146,6 +154,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " title=" + str(titleOfEngSubs[num]))
             metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " language=" + str(langOfEngSubs[num]))
             mapThisStream.append(listOfEngSubs[num])
+        if len(listOfEngAudios) >= 1:  # Piggybacking additional english Audio
+            for num in range(0, len(listOfEngAudios)):
+                metadataOptions += (" -metadata:s:" + str(listOfEngAudios[num]) + " title=" + str(titleOfEngAudios[num]))
+                metadataOptions += (" -metadata:s:" + str(listOfEngAudios[num]) + " language=" + str(langOfEngAudios[num]))
+                mapThisStream.append(listOfEngAudios[num])
 
     if japAudioFound is False and firstAudioStreamNum != -1:  # No jpn audio was found, so add the first audio stream, or the first eng audio
         mapThisStream.append(firstAudioStreamNum)
@@ -210,6 +223,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             defaultSubSelected = True
 
     outputMaps = ""
+    mapThisStream = sorted(mapThisStream)
     for item in mapThisStream:
         outputMaps += " -map 0:" + str(item)  # -map 0:3
         # Could add prettyTables here and only print the index with item (number)
