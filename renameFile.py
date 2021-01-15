@@ -702,7 +702,8 @@ def renameFile(filename):
     outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
     outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename, flags=re.I)  # remove e.g.(ABC12345)
 
-    outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
+    if not re.search("S[0-9][0-9]E[0-9][0-9].[0-9] ", outputFilename):  # If S01E01.5(space), then skip removing dots (Some use the .5 for a second part of an episode)
+        outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
     outputFilename = outputFilename.replace("_", " ")  # _ is usually a stand in for a space
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one
