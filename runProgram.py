@@ -39,12 +39,12 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
     print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
 
     if currentOS == "Linux":
-        #print("ffmpeg -v error -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0 "+metadataAndMaps+" -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        #print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" +  metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
         errorCheck = run("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
     elif currentOS == "Windows":
         # Output:
-        #print("ffmpeg -v error -xerror -n -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy -copy_unknown \"" + outputFileNameAndDirectory + "\"")
+        # print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
         errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
 
         if len(str(errorCheck.stderr)) > 8:  # Integrity and error check
@@ -52,7 +52,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
                 print(filename + Fore.CYAN + ": Was not encoded to specification" + Fore.RESET)
                 infos += 1
             elif str(errorCheck.stderr).find("already exists. Exiting.") != -1:
-                None
+                print("already exists")
             else:
                 errorOutput = re.sub("b\"", "", str(errorCheck.stderr))
                 errorOutput = re.sub("b\'", "", errorOutput)
