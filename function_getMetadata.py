@@ -8,13 +8,14 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
 
     # Overview: Call ffmpeg for an output, save to file, read that file line by line in to a PrettyTable for processing. Plus the number of streams.
 
-    metadataTable = PrettyTable(['Index', 'title', 'language', 'codec_type', 'channels'])
+    metadataTable = PrettyTable(['Index', 'title', 'language', 'codec_type', 'channels', 'codec_name'])
 
     metadataTableIndex = ""
     metadataTableTitle = ""
     metadataTableLang = ""
     metadataTableCodecType = ""
     metadataTableChannels = ""
+    metadataTableCodecName = ""
     totalNumOfStreams = 0
     firstIteration = False
 
@@ -35,10 +36,9 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
             lenAdjust = 1
 
         if line.find("\"index\":") != -1:
-            #print("Index: " + line[21:len(line) - 1])
 
             if firstIteration == True:
-                metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels])
+                metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels, metadataTableCodecName])
                 # print(metadataTable.get_string(start=rowNum, end=rowNum + 1, fields=["Index"]))
                 #rowNum += 1
                 metadataTableIndex = ""
@@ -59,12 +59,11 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
             metadataTableCodecType = line[27:len(line) - lenAdjust]
         elif line.find("\"channels\":") != -1:
             metadataTableChannels = line[24:len(line) - lenAdjust]
+        elif line.find("codec_name") != -1:
+            metadataTableCodecName = line[27:len(line) - lenAdjust]
+            print(line[27:len(line) - lenAdjust])
 
-        #elif line.find("codec_name=") != -1:
-        #    currentLine = currentLine + line + " "
-        #    metadataTableCodecName = "codec_name=" + str(lineNum)
-
-    metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels])  # add last row
+    metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels, metadataTableCodecName])  # add last row
     totalNumOfStreams += 1  # last row
 
     #metadataTable.border = False

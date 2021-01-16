@@ -1,236 +1,204 @@
 from prettytable import PrettyTable
-from compareSizes import compareSizes
 from colorama import Fore
-
+from findBestEngSubStream import findBestEngSubStream
+from function_getNumOfAudioAndSubs import *
 
 def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infos):
 
-    # print("Started main2")
+    outputTable = PrettyTable(["Index", "Title", "Language", "CodecType", "CodecName"])
+    outputTable.border = False
+    outputTable.header = False
+    defaultStreams = []
 
-    mapThisStream = []  # Don't add streams non eng/jpn streams
-    outputStreamNum = 0  # apply the metadata to the final stream number for ffmpeg will forget when it maps the streams "Stream #0:12 -> #0:3 (copy)"
-
-    metadataOptions = ""
-
-    defaultSubSelected = False  # Becomes True when a Default Sub stream is selected
-    defaultAudioSelected = False  # Becomes True when a Default Audio stream is selected
-    firstAudioStreamLang = "und"
-    firstAudioStreamTitle = ""
-    firstAudioFound = False  # For adding sub/signs if its the only sub track
-    firstAudioStreamNum = -1
-    firstAudiooutputStreamNum = -1
-    signSongsStream = []
-    listOfEngSubs = []
-    titleOfEngSubs = []
-    langOfEngSubs = []
-    listOfEngAudios = []
-    titleOfEngAudios = []
-    langOfEngAudios = []
-    mapThisStreamIfNoSubsFound = []
-    definiteDefaultSubFound = False
-    japAudioFound = False
-
-    foreignWarning = False
-
+    # Adding titles and making output prettyTable
     for lineNum in range(0, totalNumOfStreams):
         addAudioInfo = True
-        titleLang = "\""
-        # Populate temp variables with data from prettytable
+        streamTitle = "\""
+        addDefault = False
+        # Populate temp variables with data from prettyTable
         metaTitle = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["title"]).strip()).lower()  # .lower() for case insensitive
         metaLang = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["language"]).strip()).lower()
         metaCodecType = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_type"]).strip()).lower()
         metaChannels = metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["channels"]).strip()
+        metaCodecName = (metadataTable.get_string(start=lineNum, end=lineNum + 1, fields=["codec_name"]).strip()).lower()
 
         # Handles both audio and subtitles
 
         if metaTitle.find("signs") != -1 or metaTitle.find("songs") != -1:
-            titleLang += "Signs / Songs"
+            streamTitle += "Signs / Songs"
             metaLang = "und"  # We'll und signs/song
         elif metaLang == "jpn":
-            titleLang += "Japanese"
+            streamTitle += "Japanese"
         elif metaLang == "eng":
-            titleLang += "English"
+            streamTitle += "English"
         else:  # no eng/jpn found though language tags, check titles:
             if metaTitle.find("english") != -1 or metaTitle.find("inglês") != -1:
-                titleLang += "English"
+                streamTitle += "English"
                 metaLang = "eng"
                 print(Fore.CYAN + "Found Title Via Backup way" + Fore.RESET)
                 infos += 1
             elif metaTitle.find("japanese") != -1 or metaTitle.find("Japonês") != -1:
-                titleLang += "Japanese"
+                streamTitle += "Japanese"
                 metaLang = "jpn"
                 print(Fore.CYAN + "Found Title Via Backup way" + Fore.RESET)
                 infos += 1
             else:  # No eng or jpn found:
                 metaLang = "und"
                 addAudioInfo = False
-                aLanguageWasFound = False
 
         # Closed Captioning
         if metaTitle.find("[cc]") != -1 or metaTitle.find("(cc)") != -1:
-            titleLang += " (CC)"
+            streamTitle += " (CC)"
 
-        if metaTitle.find("full subs") != -1 or metaTitle.find("full subtitle") != -1 and defaultSubSelected is False:  # if the sub's title is "full subs", then we found your default
-            metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
-            titleLang = "\"English, Full Subtitles"  # We'll rename for this
-            definiteDefaultSubFound = True
+        if metaLang == "eng":
+            for item in ["dialogue", "full subs", "full subtitle", "[full]", "(full)", "modified"]:  # if sub's title is one of these, then make it default
+                if metaTitle.find(item) != -1:
+                    addDefault = True
+                    streamTitle = "\"English, Full Subtitles"  # We'll rename for this
+                    break
 
         if addAudioInfo is True:
             if metaChannels == "2":
-                titleLang += " (2.0)"
+                streamTitle += " (2.0)"
             elif metaChannels == "3":  # LOL if someone uses this
-                titleLang += " (2.1)"
+                streamTitle += " (2.1)"
             elif metaChannels == "4":
-                titleLang += " (4.0)"
+                streamTitle += " (4.0)"
             elif metaChannels == "5":
-                titleLang += " (5.0)"
+                streamTitle += " (5.0)"
             elif metaChannels == "6":
-                titleLang += " (5.1)"
+                streamTitle += " (5.1)"
             elif metaChannels == "7":
-                titleLang += " (7.0)"
+                streamTitle += " (7.0)"
             elif metaChannels == "8":
-                titleLang += " (7.1)"
+                streamTitle += " (7.1)"
 
-        titleLang += "\""  # zip up titleLang
+        streamTitle += "\""
 
-        # ---- DEFAULT STREAMS ----
+        if metaCodecType == "video":
+            metaLang = "und"
+            streamTitle = "\"\""
 
-        if defaultAudioSelected is False and metaCodecType == "audio" and metaLang == "jpn":  # Check if first Jap Audio and set as default
-            defaultAudioSelected = True
-            japAudioFound = True
-            metadataOptions += " -disposition:" + str(outputStreamNum) + " default"
-        elif metaCodecType == "audio" and defaultAudioSelected is False and metaLang == "jpn":  # Make all other audio stream's not default
-            metadataOptions += " -disposition:" + str(outputStreamNum) + " 0"
-        elif metaCodecType == "audio" and metaLang == "eng":
-            listOfEngAudios.append(lineNum)
-            titleOfEngAudios.append(titleLang)
-            langOfEngAudios.append(metaLang)
-            outputStreamNum += 1
+        outputTableIndex = str(lineNum)
+        outputTableTitle = str(streamTitle)
+        outputTableLang = str(metaLang)
+        outputTableCodec = str(metaCodecType)
 
-        if defaultSubSelected is False and metaCodecType == "subtitle" and metaLang == "eng":  # Check if first Eng Sub and set as default
-            listOfEngSubs.append(lineNum)
-            titleOfEngSubs.append(titleLang)
-            langOfEngSubs.append(metaLang)
-            outputStreamNum += 1
-        elif titleLang == "\"Signs / Songs\"":
-            signSongsStream.append(outputStreamNum)
-            outputStreamNum += 1
-        elif defaultSubSelected is False and metaCodecType == "subtitle" and metaLang == "und":
-            mapThisStreamIfNoSubsFound.append(lineNum)
-
-        # ---- ADDING METADATA ----
-
-        if metaCodecType == "video":  # Add the video stream
-            mapThisStream.append(lineNum)
-            outputStreamNum += 1  # A stream has been definitely added to the output
-
-        if metaLang != "und":  # Don't title non eng/jpn (all stream com in as und and were renamed earlier)
-            if metaCodecType != "video":  # Don't title video streams or
-                if (metaCodecType == "subtitle" and metaLang != "eng") or (metaCodecType == "audio" and metaLang == "jpn"):  # Don't add english subs, they will come later
-                    metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " title=" + titleLang)
-                    metadataOptions += (" -metadata:s:" + str(outputStreamNum) + " language=" + metaLang)
-                    mapThisStream.append(lineNum)
-                    outputStreamNum += 1
-        if metaCodecType == "audio" and firstAudioFound is False and metaLang == "und":  # Incase there is no jap audio
-            firstAudioFound = True
-            firstAudioStreamLang = metaLang
-            firstAudioStreamNum = lineNum
-            firstAudiooutputStreamNum = outputStreamNum
-        elif metaCodecType == "audio" and firstAudioStreamLang != "eng" and metaLang == "eng":  # Rather have eng audio then und
-            firstAudioFound = True
-            firstAudioStreamTitle = titleLang
-            firstAudioStreamLang = metaLang
-            firstAudioStreamNum = lineNum
-            firstAudiooutputStreamNum = outputStreamNum
-
+        defaultStreams.append(addDefault)
+        #                       Index               Title           Language            Codec
+        outputTable.add_row([outputTableIndex, outputTableTitle, outputTableLang, outputTableCodec, metaCodecName])
 
     # ---- END FOR LOOP ----
 
-    if japAudioFound is False and firstAudioStreamLang == "eng" and engAudioNoSubs is True:
-        definiteDefaultSubFound = True
-        # -- ADD ENGLISH SUBS --
-    elif japAudioFound is True and len(listOfEngSubs) >= 1:
-        for num in range(0, len(listOfEngSubs)):
-            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " title=" + str(titleOfEngSubs[num]))
-            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " language=" + str(langOfEngSubs[num]))
-            mapThisStream.append(listOfEngSubs[num])
-        if len(listOfEngAudios) >= 1:  # Piggybacking additional english Audio
-            for num in range(0, len(listOfEngAudios)):
-                metadataOptions += (" -metadata:s:" + str(listOfEngAudios[num]) + " title=" + str(titleOfEngAudios[num]))
-                metadataOptions += (" -metadata:s:" + str(listOfEngAudios[num]) + " language=" + str(langOfEngAudios[num]))
-                mapThisStream.append(listOfEngAudios[num])
+    jpnAudioFound = False
+    engAudioFound = False
+    listOfEngSubs = []
+    engSubFound = False
+    engsub = 0
+    tempNum = 0
+    for item in outputTable:
+        if findEngSub(outputTable, tempNum) is True and defaultStreams[tempNum] is True:
+            engSubFound = True
+            break
+        elif findEngSub(outputTable, tempNum) is True:
+            engSubFound = True
+            listOfEngSubs.append(tempNum)
+        elif findJpnAudio(outputTable, tempNum) is True:
+            defaultStreams[tempNum] = True
+            jpnAudioFound = True
+        elif findEngAudio(outputTable, tempNum) is True:
+            engAudioFound = True
+        tempNum += 1
 
-    if japAudioFound is False and firstAudioStreamNum != -1:  # No jpn audio was found, so add the first audio stream, or the first eng audio
-        mapThisStream.append(firstAudioStreamNum)
-        metadataOptions += " -disposition:" + str(firstAudiooutputStreamNum) + " default"
-        metadataOptions += (" -metadata:s:" + str(firstAudiooutputStreamNum) + " language=" + firstAudioStreamLang)
-        metadataOptions += (" -metadata:s:" + str(firstAudiooutputStreamNum) + " title=" + firstAudioStreamTitle)
+    if len(listOfEngSubs) == 1:
+        defaultStreams[engsub] = True
+    elif len(listOfEngSubs) >= 2:
+        row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
+        defaultStreams[row] = True
 
-    if len(listOfEngSubs) >= 1 and firstAudioStreamLang == "und":
-        for num in range(0, len(listOfEngSubs)):
-            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " title=" + str(titleOfEngSubs[num]))
-            metadataOptions += (" -metadata:s:" + str(listOfEngSubs[num]) + " language=" + str(langOfEngSubs[num]))
-            mapThisStream.append(listOfEngSubs[num])
-    elif len(listOfEngSubs) == 0 and firstAudioStreamLang == "und" and len(mapThisStreamIfNoSubsFound) != 0:
-        mapThisStream.append(mapThisStreamIfNoSubsFound[0])
+    tempNumber = 0
+    outLang = []
+    outCodecType = []
+    outCodecName = []
+    for item in outputTable:  # Cant work directly on the prettyTable, or it will delete the rows your working on, even it you tell it to delete from another table
+        outLang.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["Language"]).strip()))
+        outCodecType.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["CodecType"]).strip()))
+        outCodecName.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["CodecName"]).strip()))
+        tempNumber += 1
 
-    if len(signSongsStream) != 0:  # Add a sign/song Tracks, make it default if theres no eng/jpn one found
-        for item in signSongsStream:
-            mapThisStream.append(item)
-            metadataOptions += (" -metadata:s:" + str(item) + " title=\"Signs/Songs\"" )
-            if defaultSubSelected is False:  # Only add the first sign/songs
-                metadataOptions += " -disposition:" + str(item) + " default"
-                defaultSubSelected = True
+    tempNum = 0
+    deletedRows = 0
+    for item in range(0, len(outLang)):
 
-    # ---- Choose Default sub if more then one english sub ----
-    # Also handles detection of foreign audio without an english sub
-    if (definiteDefaultSubFound is False and firstAudioStreamLang == "und") or (definiteDefaultSubFound is False and japAudioFound is True):
-        if len(listOfEngSubs) == 0 and firstAudioStreamLang == "und":
-            # No English Subs to go with a foreign audio stream
-            foreignWarning = True
-        elif len(listOfEngSubs) == 1:  # set default if theres only one eng sub
-            defaultSubSelected = True
-            metadataOptions += " -disposition:" + str(listOfEngSubs[0]) + " default"
-        elif len(listOfEngSubs) >= 2:
+        # Things We Want To Remove:
+        if jpnAudioFound is True:
+            if outCodecType[tempNum] == "subtitle" and outLang[tempNum] == "und":
+                outputTable.del_row(tempNum - deletedRows)
+                del defaultStreams[tempNum - deletedRows]
+                deletedRows += 1
+            elif outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
+                outputTable.del_row(tempNum - deletedRows)
+                del defaultStreams[tempNum - deletedRows]
+                deletedRows += 1
 
-            biggestStreamSize = 0
-            biggestStreamNum = 0
-            secondBiggestStreamSize = 0
-            secondBiggestStreamNum = 0
-            selBiggestStream = False
+        elif engAudioFound is True:  # Theres no JPN AUDIO if the program got to here
+            if outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
+                outputTable.del_row(tempNum - deletedRows)
+                del defaultStreams[tempNum - deletedRows]
+                deletedRows += 1
+            elif outCodecType[tempNum] == "subtitle":  # Remove all subs since its english audio
+                outputTable.del_row(tempNum - deletedRows)
+                del defaultStreams[tempNum - deletedRows]
+                deletedRows += 1
 
-            for num in range(0, len(listOfEngSubs)):  # Start iterating from the first sub
+        elif engAudioFound is False:  # Theres no JPN AUDIO if the program got to here
+            if engSubFound is True:  # If theres not eng audio and no eng subs, then keep all audio and subs
+                if outCodecType[tempNum] == "subtitle" and outLang[tempNum] == "und":
+                    outputTable.del_row(tempNum - deletedRows)
+                    del defaultStreams[tempNum - deletedRows]
+                    deletedRows += 1
+        if outCodecType[tempNum] == "attachment":
+            outputTable.del_row(tempNum - deletedRows)
+            del defaultStreams[tempNum - deletedRows]
+            deletedRows += 1
+        if outCodecName[tempNum] == "mjpeg":
+            outputTable.del_row(tempNum - deletedRows)
+            del defaultStreams[tempNum - deletedRows]
+            deletedRows += 1
 
-                streamSize = compareSizes(num, filename, currentOS)
+        tempNum += 1
 
-                if len(listOfEngSubs) == 2:  # Just select the biggest if theres only 2 subs
-                    selBiggestStream = True
-                    if streamSize > biggestStreamSize:
-                        biggestStreamSize = streamSize
-                        biggestStreamNum = outputStreamNum
+    # END Loop
+    outputTable.add_column('IsDefault', defaultStreams)
 
-                elif len(listOfEngSubs) >= 3:  # select the second biggest if theres more then 2 subs
-                    if streamSize > biggestStreamSize:  # If current stream is biggest
-                        biggestStreamSize = streamSize
-                    elif streamSize > secondBiggestStreamSize:  # If the current stream is not the biggest, but bigger the the second biggest
-                        secondBiggestStreamSize = streamSize
-                        secondBiggestStreamNum = outputStreamNum
+    tempNum = 0
+    outputDisposition = ""
+    for row in defaultStreams:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+        disposition = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
+        if row is True:
+            outputDisposition += " -disposition:" + str(disposition).replace("[\'", "").replace("\']", "") + " default"
+        elif row is False:
+            outputDisposition += " -disposition:" + str(disposition).replace("[\'", "").replace("\']", "") + " 0"
+        tempNum += 1
 
-            if selBiggestStream == True:
-                metadataOptions += " -disposition:" + str(biggestStreamNum) + " default"
-            else:
-                metadataOptions += " -disposition:" + str(secondBiggestStreamNum) + " default"
-            defaultSubSelected = True
+    tempNum = 0
+    outputMetadata = ""
+    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+        title = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Title"]).split()
+        language = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Language"]).split()
+        outputMetadata += " -metadata:s:" + str(tempNum) + " title=" + str(title).replace("[\'", "").replace("\']", "").replace("\', \'", " ")
+        outputMetadata += " -metadata:s:" + str(tempNum) + " language=" + str(language).replace("[\'", "").replace("\']", "").replace("\', \'", " ")
+        tempNum += 1
 
     outputMaps = ""
-    mapThisStream = sorted(mapThisStream)
-    for item in mapThisStream:
-        outputMaps += " -map 0:" + str(item)  # -map 0:3
-        # Could add prettyTables here and only print the index with item (number)
-        # E.g. outputTable += (metadataTable.get_string(start=item, end=item + 1, fields=['Index', 'title', 'language', 'codec_type', 'channels']).strip())
+    tempNum = 0
+    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+        mapNum = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
+        outputMaps += " -map 0:" + str(mapNum).replace("[\'", "").replace("\']", "")  # -map 0:3
+        tempNum += 1
 
-    metadataAndMaps = metadataOptions + outputMaps
-    #print(metadataAndMaps)
+    metadataAndMaps = outputMetadata + outputDisposition + outputMaps
+
     # Print(outputTable.get_string())
-
+    foreignWarning = False
     return metadataAndMaps, foreignWarning, infos

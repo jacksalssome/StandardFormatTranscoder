@@ -169,15 +169,15 @@ elif runRecursive == False:
 
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
             inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
-            try:
-                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
-            except KeyboardInterrupt:  # Handling CTRL+C
-                print("")  # Dealing with the end='/r' in runProgram
-                print("CTRL+C pressed, Exiting...")
-                os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its not done
-                sys.exit()
-            except:  # if runProgram gives us an error or warning well jump to the next file
-                continue
+            #try:
+            iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
+            #except KeyboardInterrupt:  # Handling CTRL+C
+            #    print("")  # Dealing with the end='/r' in runProgram
+            #    print("CTRL+C pressed, Exiting...")
+            #    os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its not done
+            #    sys.exit()
+            #except:  # if runProgram gives us an error or warning well jump to the next file
+            #    continue
 
 # Info on number of files processed, warnings and errors
 if iterations != 0:
