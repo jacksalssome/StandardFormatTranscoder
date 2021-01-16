@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
 from colorama import Fore
-from findBestEngSubStream import findBestEngSubStream
+from function_findBestEngSubStream import findBestEngSubStream
 from function_getNumOfAudioAndSubs import *
 
 def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infos):

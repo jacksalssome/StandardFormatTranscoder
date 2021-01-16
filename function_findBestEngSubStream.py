@@ -1,4 +1,4 @@
-from compareSizes import compareSizes
+from function_compareSizes import compareSizes
 
 
 def findBestEngSubStream(listOfEngSubs, filename, currentOS):

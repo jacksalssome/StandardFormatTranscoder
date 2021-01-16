@@ -10,8 +10,8 @@ from subprocess import run
 import subprocess
 import argparse
 # Local Files
-from renameFile import renameFile
-from runProgram import runProgram
+from function_renameFile import renameFile
+from function_runProgram import runProgram
 
 
 init()  # Makes sure windows displays colour. KEEP AT TOP
