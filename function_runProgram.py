@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from subprocess import run
-import subprocess
 from colorama import Fore  # Color in windows and linux
 import re
 

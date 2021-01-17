@@ -1,7 +1,7 @@
 from prettytable import PrettyTable
 import ffmpeg
 import json
-from colorama import Fore, Style
+from colorama import Fore
 
 
 def getAndSaveMetadata(filename, filenameAndDirectory):
@@ -61,7 +61,6 @@ def getAndSaveMetadata(filename, filenameAndDirectory):
             metadataTableChannels = line[24:len(line) - lenAdjust]
         elif line.find("codec_name") != -1:
             metadataTableCodecName = line[27:len(line) - lenAdjust]
-            print(line[27:len(line) - lenAdjust])
 
     metadataTable.add_row([metadataTableIndex, metadataTableTitle, metadataTableLang, metadataTableCodecType, metadataTableChannels, metadataTableCodecName])  # add last row
     totalNumOfStreams += 1  # last row

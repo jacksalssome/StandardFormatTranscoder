@@ -3,6 +3,7 @@ from colorama import Fore
 from function_findBestEngSubStream import findBestEngSubStream
 from function_getNumOfAudioAndSubs import *
 
+
 def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infos):
 
     outputTable = PrettyTable(["Index", "Title", "Language", "CodecType", "CodecName"])

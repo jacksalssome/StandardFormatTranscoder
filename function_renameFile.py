@@ -27,6 +27,14 @@ def renameFile(filename):
         "[]",
         "{}",
         "[Web 1080p HEVC Multi]",
+        "(1080p BluRay x265 HEVC 10bit EAC3 2.0 SAMPA)",
+        "(Diamond Luxe)",
+        "(1080p BluRay x265 HEVC 10bit EAC3 7.1 SAMPA)",
+        "(1080p BluRay x265 HEVC 10bit EAC3 5.1 SAMPA)",
+        "(1080p BluRay x265 HEVC 10bit AC3 1.0 SAMPA)",
+        "(Criterion)(1080p BluRay x265 HEVC 10bit AC3 1.0 SAMPA)",
+        "(1080p BluRay x265 HEVC 10bit AAC 7 1 SAMPA)",
+        "(Criterion)",
         "HR-RG",
         "480p",
         "(Multiple Subtitle)",
@@ -43,7 +51,7 @@ def renameFile(filename):
         "[HEVC-x265]",
         "1080p.WEB.x264",
         "WEB.x264",
-        "x264"
+        "x264",
         "[x264]"
         "[BD]",
         "[AAC]",
@@ -580,6 +588,7 @@ def renameFile(filename):
         "(1080p BDRip x265 10bit EAC3 5.1 - Species180)",
         "(1080p WEB-DL x265 Panda)",
         "(Bd 1080P Hi10 Flac)",
+        "EAC3",
         ]
 
     # simpleList = [
