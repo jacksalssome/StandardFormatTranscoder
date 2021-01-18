@@ -1,15 +1,17 @@
 # StandardFormatTranscoder
-<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF.png" alt="SMF logo" width="20%" />
+<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF-Github-Page.png" alt="SMF logo" width="50%" />
                                                                                                                       
 ## Overview
 
-* Removes metadata from Video files (currently only .MKV), but leaves track titles with audio channels, so if its 5.1 surround and an english track it will be: English (5.1)
+* Removes metadata from Video files (.mkv, .mp4, .m4v), renames track titles, for example: "English (5.1)", "Japenese (2.0)", "English", "Full Subsitles" or "Songs / Signs"
 
-* Automaticly selects a japanese audio track and the "best" english subtitle track
+* Can rename files (See the examples section)
 
-* Leaves video alone, if you give it a MKV(HEVC, ACC and HDMV-PGS) it will just copy them and change the metadata.
+* Automaticly selects a japanese audio track and the "best" english subtitle track (If present)
 
-* Removes attachments and cover art
+* Leaves codecs alone, if you give it a MKV(HEVC, ACC and HDMV-PGS) it will just copy them and change the metadata.
+
+* Removes attachments, mjpeg video streams and cover art
 
 * Tests integrity and will skip possibly currupted, incomplete or incorrect permissons in video files.
 
@@ -61,11 +63,10 @@ To Install ffmpeg and ffprobe to the system path under windows:
 6) Click on New and type in "C:\Program Files\ffmpeg" (No Quotes)
 8) Log off and back on, ffmpeg should be working now (can test oping CMD and typing "ffmpeg")
 
-  Under Linux Just inssue the command: 
+Under Linux Just inssue the command: 
   
-  Ubuntu/Debian: sudo apt install ffmpeg  
-  or  
-  Fedora: sudo dnf install ffmpeg
+    Ubuntu/Debian: sudo apt install ffmpeg   
+    Fedora: sudo dnf install ffmpeg
 
  ## How to run
 
@@ -80,17 +81,26 @@ You can then just move the exe around from directory to directory
     > StandardFormatTranscoder.exe --input \Path where the files are>
 
     For Example:
-
+    Windows:
     > cd C:\Users\username\Downloads\
     > StandardFormatTranscoder.exe --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    Linux
+    > cd /home/username/Downloads
+    > ./StandardFormatTranscoder --input "/MyVideoFiles/FolderOne/"
     
     Recursive:
-    
+    Windows:
     > StandardFormatTranscoder.exe -r --input "C:\Users\username\Videos\[ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]"
+    Linux:
+    > ./StandardFormatTranscoder -r --input "/MyVideoFiles/FolderOne/"
     
-    Output of SFT will be:
+    Recursive creates a new top folder, using the paths gived above:
+    Windows:
     "C:\Users\username\Videos\SFT output: [ILoveYou] Another Show [BDRip 1920x1080 x264 FLAC]\"
-    (It also tells you after completion)
+    Linux:
+    /MyVideoFiles/SFT output: FolderOne/
+    
+    (It also tells you where you files after the program completes)
 
 
 ## Examples
@@ -119,9 +129,9 @@ Here is a breakdown of a MKV file showing each video, audio, subtitle and attach
     |   15  |                     |          | attachment |          |     
     +-------+---------------------+----------+------------+----------+     
     
-    If theres a conflict, like index 4, 5 and 6, then it will select the second largest subtitle by file size.
+    If theres a conflict, like index 4, 5 and 6, then it will select the second largest subtitle by file size, or if one of them has "dialogue", "full subs", "full subtitle", "[full]", "(full)" or "modified" in the track title it will be default.
 
-Heres some examples of automatic file renaming:
+#### Heres some examples of automatic file renaming:
 
 Input: This.Is.A.Show.S01E04.1080p.BluRay.10-Bit.FLAC5.1.x265-ILOVEYOU.mkv  
 Output: This Is A Show S01E04.mkv
@@ -144,4 +154,4 @@ So standard formatting for a filename is:
 # Compiling
 
 I use PyCharm 2020 (Hard wrap at 270, because i have long single line commands)  
-pyinstaller  --icon=images\favicon.ico --onefile StandardFormatTranscoder.py
+PyInstaller --icon=images\favicon.ico --onefile standardFormatTranscoder.py
