@@ -1,5 +1,6 @@
 *.mkv
 *.mp4
+*.m4v
 build
 dist
 *.spec
