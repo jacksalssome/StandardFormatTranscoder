@@ -4,7 +4,7 @@ from function_findBestEngSubStream import findBestEngSubStream
 from function_getNumOfAudioAndSubs import *
 
 
-def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infos):
+def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages):
 
     outputTable = PrettyTable(["Index", "Title", "Language", "CodecType", "CodecName"])
     outputTable.border = False
@@ -37,12 +37,12 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                 streamTitle += "English"
                 metaLang = "eng"
                 print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
-                infos += 1
-            elif "japanese" in metaTitle or "Japonês" in metaTitle:
+                infoMessages += 1
+            elif "japanese" in metaTitle or "japonês" in metaTitle:
                 streamTitle += "Japanese"
                 metaLang = "jpn"
                 print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
-                infos += 1
+                infoMessages += 1
             else:  # No eng or jpn found:
                 metaLang = "und"
                 addAudioInfo = False
@@ -95,9 +95,9 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     engAudioFound = False
     listOfEngSubs = []
     engSubFound = False
-    engsub = 0
+    engSub = 0
     tempNum = 0
-    for item in outputTable:
+    for i in outputTable:
         if findEngSub(outputTable, tempNum) is True and defaultStreams[tempNum] is True:
             engSubFound = True
             break
@@ -112,7 +112,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         tempNum += 1
 
     if len(listOfEngSubs) == 1:
-        defaultStreams[engsub] = True
+        defaultStreams[engSub] = True
     elif len(listOfEngSubs) >= 2:
         row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
         defaultStreams[row] = True
@@ -123,7 +123,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     outLang = []
     outCodecType = []
     outCodecName = []
-    for item in outputTable:
+    for i in outputTable:
         # Cant work directly on the prettyTable, or it will delete the rows your working on, even it you tell it to delete from another table
         # So i cheat and convert the columns i need to lists, why did i make a table in the first place?
         # Because i didn't want to keep 6 lists in sync.
@@ -147,7 +147,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             if outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
-            elif outCodecType[tempNum] == "subtitle":  # Remove all subs since its english audio
+            elif outCodecType[tempNum] == "subtitle" and engAudioNoSubs is True:  # Remove all subs if engAudioNoSubs is True
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
         elif engAudioFound is False:  # Theres no JPN AUDIO if the program got to here
@@ -199,4 +199,4 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     #outputTable.header = False
 
     foreignWarning = False
-    return metadataAndMaps, foreignWarning, infos
+    return metadataAndMaps, infoMessages

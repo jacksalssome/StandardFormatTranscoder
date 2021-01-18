@@ -1,7 +1,5 @@
 import subprocess
 import re
-import ffmpeg
-import json
 
 
 def compareSizes(streamNum, filename, currentOS):
@@ -9,9 +7,13 @@ def compareSizes(streamNum, filename, currentOS):
     #print("Determining best subtitle stream")
 
     valOne = 0
+    output = ""
 
     # Found on stackoverflow, just streams out packets then i capture then in a list
-    output = str(subprocess.check_output("cmd /c ffprobe -v error -show_packets -select_streams "+str(streamNum)+" -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \""+filename+"\"", shell=False))
+    if currentOS == "Linux":
+        output = str(subprocess.check_output("ffprobe -v error -show_packets -select_streams " + str(streamNum) + " -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \"" + filename + "\"", shell=False))
+    elif currentOS == "Windows":
+        output = str(subprocess.check_output("cmd /c ffprobe -v error -show_packets -select_streams "+str(streamNum)+" -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \""+filename+"\"", shell=False))
 
     cleanOutput = re.sub("[b']", "", output)
     cleanOutput = cleanOutput.replace("\\r", "")

@@ -44,7 +44,14 @@ except:
 
 # TODO:
 # Add -o --output, so user can specify and output dir
-# Add MP4?
+
+
+directory = ""
+runRecursive = False
+runRename = False
+engAudioNoSubs = False
+forceOverwrite = False
+
 
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
 
@@ -57,9 +64,9 @@ parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto 
 args, unknown = parser.parse_known_args()
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
-    tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('\])", "", str(unknown))))))
+    tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('])", "", str(unknown))))))
     if "," + Fore.RESET in tempString:
-        tempString = Fore.YELLOW + "these are: \"" + Fore.RESET + tempString
+        tempString = Fore.YELLOW + "these are: \"" + Fore.RESET + tempString # This is all to be grammatically correct.
     else:
         tempString = Fore.YELLOW + "this is: \"" + Fore.RESET + tempString
     print(Fore.YELLOW + "Don't know what " + Fore.RESET + tempString + Fore.YELLOW + "\"" + Fore.RESET)
@@ -95,45 +102,34 @@ elif os.path.exists(args.input):
                 print("Please enter yes or no.")
 else:
     if currentOS == "Windows" and len(args.input) <= 3:  # <= 3 equals C:\ (root dir)
-            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
-    elif currentOS == "Windows" and len(args.input) <= 4 and re.search("[A-Z][A-Z]:\\", str(args.input)):  # <= 4 equals AB:\ (root dir)
-            print(Fore.YELLOW + "Nice drive letters, but can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
+        print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
+    elif currentOS == "Windows" and len(args.input) <= 4 and re.search("[A-Z][A-Z]:\\\\", str(args.input)):  # <= 4 equals AB:\ (root dir)
+        print(Fore.YELLOW + "Nice drive letters, but can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
     elif currentOS == "Linux" and len(args.input) <= 1:  # <= 2 equals / (root dir)
-            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"/home\"")
+        print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"/home\"")
     else:
         print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.input + Fore.YELLOW + "\"" + Fore.RESET)
     input("Press Enter to exit...")
     sys.exit()
 
 
-if args.engAudioNoSubs == True:  # If -r or --recursive is present then enable recursive
+if args.engAudioNoSubs is True:  # If -r or --recursive is present then enable recursive
     engAudioNoSubs = True
-elif args.engAudioNoSubs == False:
-    engAudioNoSubs = False
-
-if args.force == True:  # If -r or --recursive is present then enable recursive
+if args.force is True:  # If -r or --recursive is present then enable recursive
     forceOverwrite = True
-elif args.force == False:
-    forceOverwrite = False
-
-if args.recursive == True:  # If -r or --recursive is present then enable recursive
+if args.recursive is True:  # If -r or --recursive is present then enable recursive
     runRecursive = True
-elif args.recursive == False:
-    runRecursive = False
-
-if args.rename == True:  # If --rename present, then enable auto renaming
+if args.rename is True:  # If --rename present, then enable auto renaming
     runRename = True
-elif args.rename == False:
-    runRename = False
 
 # print(os.listdir(directory))
 
 iterations = 0
 failedFiles = 0
 warningFiles = 0
-infos = 0
+infoMessages = 0
 
-if runRecursive == True:
+if runRecursive is True:
     parentDirectoryName = basename(directory)
     outputDirectory = str(Path(directory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
     for root, dirs, files in os.walk(directory):  # find the root, the directories and files.
@@ -144,7 +140,7 @@ if runRecursive == True:
 
                 inputDirectory = directory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
-                if runRename == True:
+                if runRename is True:
                     outputFilename = renameFile(inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
                     outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
@@ -154,7 +150,7 @@ if runRecursive == True:
                 Path(root.replace(directory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
+                    iterations, failedFiles, warningFiles, infoMessages = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
@@ -164,12 +160,12 @@ if runRecursive == True:
                     continue
     print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
 
-elif runRecursive == False:
+elif runRecursive is False:
     for inputFilename in os.listdir(directory):
         if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
             Path(directory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
 
-            if runRename == True:  # Rename File
+            if runRename is True:  # Rename File
                 outputFilename = renameFile(inputFilename)  # Call up function renameFile
             else:  # keep file name
                 outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
@@ -177,7 +173,7 @@ elif runRecursive == False:
             outputFileNameAndDirectory = directory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
             inputFilenameAndDirectory = directory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infos, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
+                iterations, failedFiles, warningFiles, infoMessages = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
@@ -190,8 +186,8 @@ elif runRecursive == False:
 if iterations != 0:
     print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
 
-if infos != 0:
-    print(Fore.RED + str(infos) + " Info's" + Fore.RESET)
+if infoMessages != 0:
+    print(Fore.RED + str(infoMessages) + " Info's" + Fore.RESET)
 if failedFiles != 0:
     print(Fore.RED + str(failedFiles) + " Failed" + Fore.RESET)
 if warningFiles != 0:

@@ -685,10 +685,10 @@ def renameFile(filename):
             # only subtracting the positions
             outputFilename = outputFilename[:outputFilenameLower.find(itemLower)] + outputFilename[outputFilenameLower.find(itemLower) + len(item):]
 
-    outputFilename = re.sub("FS[0-9][0-9] Joy\]", "", outputFilename, flags=re.I)           # Take this joy
+    outputFilename = re.sub("FS[0-9][0-9] Joy]", "", outputFilename, flags=re.I)           # Take this joy
     outputFilename = re.sub("FS[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)           # And your dumb filenames
     outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\)", "", outputFilename, flags=re.I)      # Yes i did write a regex
-    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\]", "", outputFilename, flags=re.I)      #
+    outputFilename = re.sub("FS[0-9][0-9][0-9] Joy]", "", outputFilename, flags=re.I)      #
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            # for one person
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            #
     # match = 0
@@ -713,7 +713,7 @@ def renameFile(filename):
     #                outputFilename = re.sub(matching, "", outputFilename)
     #            break
 
-    outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
+    outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
     outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename, flags=re.I)  # remove e.g.(ABC12345)
 
     if not re.search("S[0-9][0-9]E[0-9][0-9].[0-9] ", outputFilename):  # If S01E01.5(space), then skip removing dots (Some use the .5 for a second part of an episode)
@@ -726,7 +726,7 @@ def renameFile(filename):
     outputFilename = outputFilename.replace("[ ]", "")  # Remove empty brackets
 
     outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994) NOTE: Don't remove years with spaces on both sides
-    outputFilename = re.sub("\[[0-9][0-9][0-9][0-9]\]", "", outputFilename)  # [1994]
+    outputFilename = re.sub("\[[0-9][0-9][0-9][0-9]]", "", outputFilename)  # [1994]
 
     outputFilename = re.sub(r"ep ([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep 13 to E13
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
@@ -737,7 +737,7 @@ def renameFile(filename):
 
     outputFilename = re.sub("- ([0-9][0-9][0-9])$", r" E\1 ", outputFilename)  # Replace "- 001" with E001, why would any have so may episodes, IDK
     outputFilename = re.sub("-([0-9][0-9])$", r" E\1 ", outputFilename)  # Replace -01 If at end of file name
-    outputFilename = re.sub("\[([0-9][0-9])\]", r" E\1 ", outputFilename)  # Replace [01] with E01
+    outputFilename = re.sub("\[([0-9][0-9])]", r" E\1 ", outputFilename)  # Replace [01] with E01
 
     outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename, flags=re.I)  # 11x01 to S11E01
     outputFilename = re.sub("([0-9])x([0-9][0-9])", r" S0\1E\2 ", outputFilename, flags=re.I)  # 1x01 to S01E01

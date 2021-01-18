@@ -8,7 +8,6 @@ def findBestEngSubStream(listOfEngSubs, filename, currentOS):
     biggestStreamNum = -1
     secondBiggestStreamNum = -1
 
-
     for row in listOfEngSubs:  # Start iterating from the first sub
 
         streamSize = compareSizes(row, filename, currentOS)
