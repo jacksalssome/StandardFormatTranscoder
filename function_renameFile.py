@@ -28,6 +28,7 @@ def renameFile(filename):
         "{}",
         "[Web 1080p HEVC Multi]",
         "(1080p BluRay x265 HEVC 10bit EAC3 2.0 SAMPA)",
+        "1080p.BluRay.AC3.x265.HEVC.10Mbit.HUN.ViZoZoN",
         "(Diamond Luxe)",
         "(1080p BluRay x265 HEVC 10bit EAC3 7.1 SAMPA)",
         "(1080p BluRay x265 HEVC 10bit EAC3 5.1 SAMPA)",
@@ -85,6 +86,11 @@ def renameFile(filename):
         "h264",
         "h265",
         "(1080p Bluray x265 HEVC 10bit AAC 5.1 Tigole)",
+        "(1080p BluRay x265 HEVC 10bit AAC 7.1 Tigole)",
+        "(1080p BluRay x265 10bit Tigole)",
+        "1080p BluRay x265 HEVC EAC3-SARTRE [Torrent Downloads]",
+        "(1080p BluRay x265 Silence)",
+        "BDRip 1080p Ita Eng x265 - NAHOM",
         "[SEV]",
         "1080p",
         "DSNP",
@@ -219,7 +225,6 @@ def renameFile(filename):
         "~AA~",    #
         u"\091" u"\126" u"\065" u"\065" u"\126" u"\093",  # Cant Match Tildes so Fuck You (Its equal to [~AA~])
         u"\126" u"\065" u"\065" u"\126",                  # ~AA~
-        "(1080p BluRay x265 HEVC 10bit AAC 7.1 Tigole)",
         "[YTS.LT]",
         ".1080p.BluRay.x264-REGRET[EtHD]",
         "[EtHD]",
@@ -553,6 +558,7 @@ def renameFile(filename):
         "(1080p x265 10bit Joy)",
         "(1080p BD x265 10bit",
         "(1080p AMZN x265 10bit",
+        "(1080p x265 10bit",
         "(1080p x265 q23",
         "(1080p x265 q22",
         "(1080p x265 q21",
@@ -685,7 +691,6 @@ def renameFile(filename):
     outputFilename = re.sub("FS[0-9][0-9][0-9] Joy\]", "", outputFilename, flags=re.I)      #
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            # for one person
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            #
-
     # match = 0
     # firstMatchText = ""
     # secondMatchText = ""

@@ -25,7 +25,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
         # Handles both audio and subtitles
 
-        if metaTitle.find("signs") != -1 or metaTitle.find("songs") != -1:
+        if "signs" in metaTitle or "songs" in metaTitle:
             streamTitle += "Signs / Songs"
             metaLang = "und"  # We'll und signs/song
         elif metaLang == "jpn":
@@ -33,15 +33,15 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         elif metaLang == "eng":
             streamTitle += "English"
         else:  # no eng/jpn found though language tags, check titles:
-            if metaTitle.find("english") != -1 or metaTitle.find("inglês") != -1:
+            if "english" in metaTitle or "inglês" in metaTitle:
                 streamTitle += "English"
                 metaLang = "eng"
-                print(Fore.CYAN + "Found Title Via Backup way" + Fore.RESET)
+                print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
                 infos += 1
-            elif metaTitle.find("japanese") != -1 or metaTitle.find("Japonês") != -1:
+            elif "japanese" in metaTitle or "Japonês" in metaTitle:
                 streamTitle += "Japanese"
                 metaLang = "jpn"
-                print(Fore.CYAN + "Found Title Via Backup way" + Fore.RESET)
+                print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
                 infos += 1
             else:  # No eng or jpn found:
                 metaLang = "und"
@@ -53,7 +53,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
         if metaLang == "eng":
             for item in ["dialogue", "full subs", "full subtitle", "[full]", "(full)", "modified"]:  # if sub's title is one of these, then make it default
-                if metaTitle.find(item) != -1:
+                if item in metaTitle:
                     addDefault = True
                     streamTitle = "\"English, Full Subtitles"  # We'll rename for this
                     break
@@ -61,11 +61,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         if addAudioInfo is True:
             if metaChannels == "2":
                 streamTitle += " (2.0)"
-            elif metaChannels == "3":  # LOL if someone uses this
+            elif metaChannels == "3":
                 streamTitle += " (2.1)"
             elif metaChannels == "4":
                 streamTitle += " (4.0)"
-            elif metaChannels == "5":
+            elif metaChannels == "5":  # LOL if someone uses these odd ones
                 streamTitle += " (5.0)"
             elif metaChannels == "6":
                 streamTitle += " (5.1)"
@@ -85,7 +85,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         outputTableLang = str(metaLang)
         outputTableCodec = str(metaCodecType)
 
-        defaultStreams.append(addDefault)
+        defaultStreams.append(addDefault)  # IsDefault is separate because i couldn't find a way to change a single cell in the table.
         #                       Index               Title           Language            Codec
         outputTable.add_row([outputTableIndex, outputTableTitle, outputTableLang, outputTableCodec, metaCodecName])
 
@@ -117,11 +117,16 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
         defaultStreams[row] = True
 
+    outputTable.add_column('IsDefault', defaultStreams)  # Add IsDefault to Table
+
     tempNumber = 0
     outLang = []
     outCodecType = []
     outCodecName = []
-    for item in outputTable:  # Cant work directly on the prettyTable, or it will delete the rows your working on, even it you tell it to delete from another table
+    for item in outputTable:
+        # Cant work directly on the prettyTable, or it will delete the rows your working on, even it you tell it to delete from another table
+        # So i cheat and convert the columns i need to lists, why did i make a table in the first place?
+        # Because i didn't want to keep 6 lists in sync.
         outLang.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["Language"]).strip()))
         outCodecType.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["CodecType"]).strip()))
         outCodecName.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["CodecName"]).strip()))
@@ -130,51 +135,38 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     tempNum = 0
     deletedRows = 0
     for item in range(0, len(outLang)):
-
         # Things We Want To Remove:
         if jpnAudioFound is True:
             if outCodecType[tempNum] == "subtitle" and outLang[tempNum] == "und":
-                outputTable.del_row(tempNum - deletedRows)
-                del defaultStreams[tempNum - deletedRows]
-                deletedRows += 1
+                outputTable.del_row(tempNum - deletedRows)  # Delete the current table row
+                deletedRows += 1  # So we can track how many rows are missing (This took a day to figure out)
             elif outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
-                del defaultStreams[tempNum - deletedRows]
                 deletedRows += 1
-
         elif engAudioFound is True:  # Theres no JPN AUDIO if the program got to here
             if outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
-                del defaultStreams[tempNum - deletedRows]
                 deletedRows += 1
             elif outCodecType[tempNum] == "subtitle":  # Remove all subs since its english audio
                 outputTable.del_row(tempNum - deletedRows)
-                del defaultStreams[tempNum - deletedRows]
                 deletedRows += 1
-
         elif engAudioFound is False:  # Theres no JPN AUDIO if the program got to here
             if engSubFound is True:  # If theres not eng audio and no eng subs, then keep all audio and subs
                 if outCodecType[tempNum] == "subtitle" and outLang[tempNum] == "und":
                     outputTable.del_row(tempNum - deletedRows)
-                    del defaultStreams[tempNum - deletedRows]
                     deletedRows += 1
-        if outCodecType[tempNum] == "attachment":
+        if outCodecType[tempNum] in ("attachment", "image", "data", "text"):
             outputTable.del_row(tempNum - deletedRows)
-            del defaultStreams[tempNum - deletedRows]
             deletedRows += 1
         if outCodecName[tempNum] == "mjpeg":
             outputTable.del_row(tempNum - deletedRows)
-            del defaultStreams[tempNum - deletedRows]
             deletedRows += 1
-
         tempNum += 1
-
     # END Loop
-    outputTable.add_column('IsDefault', defaultStreams)
 
     tempNum = 0
     outputDisposition = ""
-    for row in defaultStreams:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
         disposition = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
         if row is True:
             outputDisposition += " -disposition:" + str(disposition).replace("[\'", "").replace("\']", "") + " default"
@@ -200,6 +192,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     metadataAndMaps = outputMetadata + outputDisposition + outputMaps
 
-    # Print(outputTable.get_string())
+    #outputTable.border = True
+    #outputTable.header = True
+    #print(outputTable.get_string())
+    #outputTable.border = False
+    #outputTable.header = False
+
     foreignWarning = False
     return metadataAndMaps, foreignWarning, infos

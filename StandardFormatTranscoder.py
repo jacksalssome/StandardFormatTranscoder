@@ -13,6 +13,11 @@ import argparse
 from function_renameFile import renameFile
 from function_runProgram import runProgram
 
+# TODO:
+# Add --Keep "Audio Subtitles Video Attachments"
+
+#Note
+# Try to keep normal outputs below 120 characters
 
 init()  # Makes sure windows displays colour. KEEP AT TOP
 
