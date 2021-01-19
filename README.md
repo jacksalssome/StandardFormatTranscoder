@@ -49,6 +49,10 @@ Windows & Linux
 
 Becuse its a massive package (>90Mib)
 
+## Other
+
+This program was disigned to deal with anime files, hence the japenese audio and eng subs priority. 
+
 ## Installing
 
 * Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the appropriate binary.
