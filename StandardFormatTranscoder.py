@@ -17,7 +17,7 @@ from function_runProgram import runProgram
 # Add --Keep "Audio Subtitles Video Attachments"
 
 #Note
-# Try to keep normal outputs below 120 characters
+# Try to keep outputs yo terminal/console below 120 characters
 
 init()  # Makes sure windows displays colour. KEEP AT TOP
 
@@ -58,6 +58,7 @@ print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" 
 parser = argparse.ArgumentParser()
 parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
 parser.add_argument('-i', '--input', help="\"input filename\"")
+#parser.add_argument('-o', '--output', help="\"input filename\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
@@ -66,7 +67,7 @@ args, unknown = parser.parse_known_args()
 if unknown:  # This is wildly complicated for just an error message, but it's art.
     tempString = re.sub(",", Fore.YELLOW + "," + Fore.RESET, (re.sub("\'", Fore.YELLOW + "\"" + Fore.RESET, (re.sub("(\[')|('])", "", str(unknown))))))
     if "," + Fore.RESET in tempString:
-        tempString = Fore.YELLOW + "these are: \"" + Fore.RESET + tempString # This is all to be grammatically correct.
+        tempString = Fore.YELLOW + "these are: \"" + Fore.RESET + tempString  # This is all to be grammatically correct.
     else:
         tempString = Fore.YELLOW + "this is: \"" + Fore.RESET + tempString
     print(Fore.YELLOW + "Don't know what " + Fore.RESET + tempString + Fore.YELLOW + "\"" + Fore.RESET)
@@ -185,7 +186,6 @@ elif runRecursive is False:
 # Info on number of files processed, warnings and errors
 if iterations != 0:
     print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
-
 if infoMessages != 0:
     print(Fore.RED + str(infoMessages) + " Info's" + Fore.RESET)
 if failedFiles != 0:
