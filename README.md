@@ -15,6 +15,8 @@
 
 * Tests integrity and will skip possibly currupted, incomplete or incorrect permissons in video files.
 
+* Can save disk space by removing unnedded tracks, for example if you don't know russian and don't plan to then it will drop it (If it finds an english audio track).
+
 * Easy to understand error messages: 
 
       > May Be Corrupted: "[ILoveYou] Another Show 02 [BDRip 1920x1080 x264 FLAC] [A1B2C3D4].mkv"
