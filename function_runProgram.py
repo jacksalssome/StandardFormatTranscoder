@@ -71,6 +71,6 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
         print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
     else:
-        print("Example change: " + filename + " --> " + outputFileName)
+        print(Fore.CYAN + "Dry Run: " + Fore.RESET + filenameAndDirectory + Fore.CYAN + " --> " + Fore.RESET + outputFileNameAndDirectory)
 
     return iterations, failedFiles, warningFiles, infoMessages, skippedFiles

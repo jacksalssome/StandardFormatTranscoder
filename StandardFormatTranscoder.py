@@ -65,7 +65,7 @@ parser.add_argument('-o', '--output', help="\"output directory\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
-parser.add_argument('--dry-run', action='store_true', help="Runs without changing files")
+parser.add_argument('--DryRun', action='store_true', help="Runs without changing files")
 args, unknown = parser.parse_known_args()
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
@@ -133,8 +133,7 @@ if args.input is not None:
         typeOfDirectory = "input"
         checkIfPathIsAFile(inputDirectory, typeOfDirectory)
     else:
-        print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.input + Fore.YELLOW + "\"" + Fore.RESET)
-        print(Fore.YELLOW + "Note: this program doesn't create directories" + Fore.RESET)
+        print(Fore.YELLOW + "Can't find input file path: \"" + Fore.RESET + args.input + Fore.YELLOW + "\"" + Fore.RESET)
         input("Press Enter to exit...")
         sys.exit()
 # ---- Output ----
@@ -144,7 +143,7 @@ if args.output is not None:
         typeOfDirectory = "output"
         checkIfPathIsAFile(outputDirectory, typeOfDirectory)
     else:
-        print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.output + Fore.YELLOW + "\"" + Fore.RESET)
+        print(Fore.YELLOW + "Can't find output file path: \"" + Fore.RESET + args.output + Fore.YELLOW + "\"" + Fore.RESET)
         print(Fore.YELLOW + "Note: this program doesn't create directories" + Fore.RESET)
         input("Press Enter to exit...")
         sys.exit()
@@ -157,7 +156,7 @@ if args.recursive is True:  # If -r or --recursive is present then enable recurs
     runRecursive = True
 if args.rename is True:  # If --rename present, then enable auto renaming
     runRename = True
-if args.dry-run is True:
+if args.DryRun is True:
     dryRun = True
 
 # print(os.listdir(inputDirectory))
@@ -174,11 +173,14 @@ if runRecursive is True:
         outputDirectory = str(Path(inputDirectory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
     for root, dirs, files in os.walk(inputDirectory):  # find the root, the directories and files.
         skipThis = False
-        for currentDir in dirs:
-            if root.find(parentDirectoryName + fileSlashes + currentDir) != -1:  # stop from descending into own output
+        for currentDir in dirs:  # Stop the Snake from eating its tail (Preventing recursion into own output is user is outputting to a directory in the input directory)
+            #print(outputDirectory + " ... " + root)
+            if root.find(outputDirectory) != -1:  # stop from descending into own output
+                #print("Skip")
                 skipThis = True
                 continue
         if skipThis is True:
+            #print("Skipping")
             continue
         for inputFilename in files:  # Iterate over every file
             if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # If current file is an MKV, MP4 or M4V
@@ -192,7 +194,8 @@ if runRecursive is True:
 
                 outputFilenameAndDirectory = root.replace(inputDirectory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
                 # Make the top directory "SFT output; <Selected folder>":
-                Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
+                if dryRun is False:
+                    Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
                     iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
@@ -203,7 +206,8 @@ if runRecursive is True:
                     sys.exit()
                 except:  # if runProgram gives us an error or warning well jump to the next file
                     continue
-    print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
+    if dryRun is False:
+        print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
 
 elif runRecursive is False:
     for inputFilename in os.listdir(inputDirectory):
@@ -215,7 +219,8 @@ elif runRecursive is False:
                 outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
             if noDirInputted is True:
                 outputFileNameAndDirectory = inputDirectory + fileSlashes + "SFT output" + fileSlashes + outputFilename  # Where to put the output file
-                Path(inputDirectory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
+                if dryRun is False:
+                    Path(inputDirectory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
             elif noDirInputted is False:
                 outputFileNameAndDirectory = outputDirectory + fileSlashes + outputFilename
 
@@ -233,7 +238,7 @@ elif runRecursive is False:
 # Info on number of files processed, warnings and errors
 if iterations != 0:
     if dryRun is True:
-        print(Fore.CYAN + "There would be ", iterations, "changed" + Fore.RESET)
+        print(Fore.CYAN + "There would be", iterations, "files changed" + Fore.RESET)
     else:
         print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
 if skippedFiles != 0:
