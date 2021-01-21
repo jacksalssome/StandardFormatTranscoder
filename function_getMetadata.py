@@ -1,6 +1,4 @@
 from prettytable import PrettyTable
-import ffmpeg
-import json
 from colorama import Fore
 import subprocess
 

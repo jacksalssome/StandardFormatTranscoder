@@ -8,13 +8,14 @@ from function_getMetadata import getAndSaveMetadata
 from function_addMetadataAndMaps import addMetadataAndMaps
 
 
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite):
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles):
 
     # Check If File Exists
     if forceOverwrite is False:
         if os.path.isfile(outputFileNameAndDirectory):
             print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
-            return iterations, failedFiles, warningFiles  # Skip this loop were done here
+            skippedFiles += 1
+            return iterations, failedFiles, warningFiles, infoMessages, skippedFiles  # Skip this loop were done here
 
     #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
     overwriteOption = "-n"
@@ -27,7 +28,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
     except:
         failedFiles += 1  # Add to failed count
         iterations -= 1  # Remove from successful count
-        return iterations, failedFiles, warningFiles
+        return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
 
     # Process metadata
     metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
@@ -64,8 +65,8 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
                 os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
             except:
                 print(":o Could not delete " + outputFileNameAndDirectory)
-            return iterations, failedFiles, warningFiles
+            return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
 
     packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
     print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
-    return iterations, failedFiles, warningFiles, infoMessages
+    return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
