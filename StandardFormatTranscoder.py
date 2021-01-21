@@ -12,6 +12,7 @@ import argparse
 # Local Files
 from function_renameFile import renameFile
 from function_runProgram import runProgram
+from function_filePathCheck import filePathCheck, checkIfPathIsAFile
 
 # TODO:
 # Add --Keep "Audio Subtitles Video Attachments"
@@ -53,16 +54,18 @@ runRename = False
 engAudioNoSubs = False
 forceOverwrite = False
 noDirInputted = False
+dryRun = False
 
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
-parser.add_argument('-i', '--input', help="\"input filename\"")
-parser.add_argument('-o', '--output', help="\"input filename\"")
+parser.add_argument('-i', '--input', help="\"input directory\"")
+parser.add_argument('-o', '--output', help="\"output directory\"")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
+parser.add_argument('--dry-run', action='store_true', help="Runs without changing files")
 args, unknown = parser.parse_known_args()
 
 if unknown:  # This is wildly complicated for just an error message, but it's art.
@@ -80,18 +83,8 @@ if unknown:  # This is wildly complicated for just an error message, but it's ar
 if not args.input and not args.output:  # Both missing
     # Check that were not in the root of a drive
     if args.input is not None:
-        if currentOS == "Windows" and len(args.input) <= 3:  # <= 3 equals C:\ (root dir)
-            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
-            input("Press Enter to exit...")
-            sys.exit()
-        elif currentOS == "Windows" and len(args.input) <= 4 and re.search("[A-Z][A-Z]:\\\\", str(args.input)):  # <= 4 equals AB:\ (root dir)
-            print(Fore.YELLOW + "Nice drive letters, but can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"D:\\folder\"")
-            input("Press Enter to exit...")
-            sys.exit()
-        elif currentOS == "Linux" and len(args.input) <= 1:  # <= 2 equals / (root dir)
-            print(Fore.YELLOW + "Can't run in root of drive, input has to be like: " + Fore.RESET + "-i \"/home\"")
-            input("Press Enter to exit...")
-            sys.exit()
+        inputArg = args.input
+        filePathCheck(currentOS, inputArg)
     print(Fore.YELLOW + "No input or output Directory was inputted, do you want to transcode files in:" + Fore.RESET)
     print(str(os.path.dirname(os.path.realpath(__file__))) + Fore.YELLOW + "? [Y/N]" + Fore.RESET)  # Ask the user if they want to use current dir
     answerYN = None
@@ -137,18 +130,8 @@ if args.output == args.input:
 if args.input is not None:
     if os.path.exists(args.input):
         inputDirectory = args.input  # Set working dir to input dir
-        if os.path.isfile(inputDirectory):  # If user puts in a link to a single file
-            print(Fore.YELLOW + "Cant handle direct files, only the directory they are in." + Fore.RESET)
-            print(Fore.YELLOW + "Would you like to covert all files in this directory: " + Fore.RESET + "\"" + os.path.dirname(inputDirectory) + "\"" + Fore.YELLOW + "? [Y/N]" + Fore.RESET)
-            answerYN = None
-            while answerYN not in ("yes", "no", "y", "n"):
-                answerYN = input()
-                if answerYN == "yes" or answerYN == "y":
-                    inputDirectory = os.path.dirname(inputDirectory)  # Trim input dir to the dir of the inputted file
-                elif answerYN == "no" or answerYN == "n":
-                    sys.exit()
-                else:
-                    print("Please enter yes or no.")
+        typeOfDirectory = "input"
+        checkIfPathIsAFile(inputDirectory, typeOfDirectory)
     else:
         print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.input + Fore.YELLOW + "\"" + Fore.RESET)
         print(Fore.YELLOW + "Note: this program doesn't create directories" + Fore.RESET)
@@ -158,18 +141,8 @@ if args.input is not None:
 if args.output is not None:
     if os.path.exists(args.output):
         outputDirectory = args.output  # Set working dir to input dir
-        if os.path.isfile(outputDirectory):  # If user puts in a link to a single file
-            print(Fore.YELLOW + "Can't output to a single file, only a directory." + Fore.RESET)
-            print(Fore.YELLOW + "Would you like to output files into this directory: " + Fore.RESET + "\"" + os.path.dirname(outputDirectory) + "\"" + Fore.YELLOW + "? [Y/N]" + Fore.RESET)
-            answerYN = None
-            while answerYN not in ("yes", "no", "y", "n"):
-                answerYN = input()
-                if answerYN == "yes" or answerYN == "y":
-                    outputDirectory = os.path.dirname(outputDirectory)  # Trim input dir to the dir of the inputted file
-                elif answerYN == "no" or answerYN == "n":
-                    sys.exit()
-                else:
-                    print("Please enter yes or no.")
+        typeOfDirectory = "output"
+        checkIfPathIsAFile(outputDirectory, typeOfDirectory)
     else:
         print(Fore.YELLOW + "Can't find file path: \"" + Fore.RESET + args.output + Fore.YELLOW + "\"" + Fore.RESET)
         print(Fore.YELLOW + "Note: this program doesn't create directories" + Fore.RESET)
@@ -184,6 +157,8 @@ if args.recursive is True:  # If -r or --recursive is present then enable recurs
     runRecursive = True
 if args.rename is True:  # If --rename present, then enable auto renaming
     runRename = True
+if args.dry-run is True:
+    dryRun = True
 
 # print(os.listdir(inputDirectory))
 
@@ -220,7 +195,7 @@ if runRecursive is True:
                 Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles)
+                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
@@ -246,7 +221,7 @@ elif runRecursive is False:
 
             inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles)
+                iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
@@ -257,7 +232,10 @@ elif runRecursive is False:
 
 # Info on number of files processed, warnings and errors
 if iterations != 0:
-    print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
+    if dryRun is True:
+        print(Fore.CYAN + "There would be ", iterations, "changed" + Fore.RESET)
+    else:
+        print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
 if skippedFiles != 0:
     print(Fore.CYAN + "Skipped", iterations, "files" + Fore.RESET)
 if infoMessages != 0:
