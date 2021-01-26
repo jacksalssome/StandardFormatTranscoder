@@ -171,6 +171,7 @@ if runRecursive is True:
     parentDirectoryName = basename(inputDirectory)
     if noDirInputted is True:
         outputDirectory = str(Path(inputDirectory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
+    PreviousRelativeInput = ""
     for root, dirs, files in os.walk(inputDirectory):  # find the root, the directories and files.
         skipThis = False
         for currentDir in dirs:  # Stop the Snake from eating its tail (Preventing recursion into own output is user is outputting to a directory in the input directory)
@@ -192,20 +193,77 @@ if runRecursive is True:
                 else:
                     outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
 
-                outputFilenameAndDirectory = root.replace(inputDirectory, outputDirectory) + fileSlashes + outputFilename  # Rename File and put it in "SFT output; <Selected folder>" directory
-                # Make the top directory "SFT output; <Selected folder>":
+                outputFilenameAndDirectory = root.replace(inputDirectory, outputDirectory) + fileSlashes + outputFilename
+
                 if dryRun is False:
                     Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
 
                 try:
-                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+
+                    if dryRun is True and wasSkipped is False:
+
+                        relativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
+                        relativeOutput = outputFilenameAndDirectory.replace(outputDirectory, "")
+
+
+
+                        if iterations == 0:
+                            print("")
+                            print(Fore.CYAN + inputFilenameAndDirectory.replace(relativeInput, "") + "\\" + Fore.MAGENTA + " ---> " + Fore.CYAN + outputFilenameAndDirectory.replace(relativeOutput, "") + "\\" + Fore.RESET)
+                            iterations += 1
+
+                        if runRename is False:  # No need to display names changes because there are none.
+                            break
+
+                        indentNum = 1
+                        for i in relativeInput:
+
+                            slash = relativeInput.find("\\")
+                            #print(slash, len(dryRunInputFile))
+                            #print(dryRunInputFile[0:slash + 1])
+                            relativeInput = relativeInput[slash + 1:len(relativeInput) + 2]
+                            #print("   " * indentNum + relativeInput[0:relativeInput.find("\\")])
+
+                            #print(basename(Path(relativeInput)))
+                            #breakpoint()
+
+                            if PreviousRelativeInput.find(relativeInput[0:relativeInput.find("\\")]) == -1 and relativeInput.find("\\") != -1:
+                                #print("TRUE")
+                                print(Fore.CYAN + "    " * indentNum + relativeInput[0:relativeInput.find("\\")] + Fore.RESET)
+                                #print("")
+                                #print("BAD")
+                                #print(relativeInput)
+                                #print(relativeInput[0:relativeInput.find("\\")])
+                                #print(relativeInput[0:relativeInput.find("\\")].find(relativeInput))
+                                #print("")
+
+
+                            elif relativeInput.find("\\") == -1:
+                                print("    " * indentNum + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                                break
+
+                            #else:
+                                #print("")
+                            # print(PreviousRelativeInput)
+                            #    print("BAD")
+                            #    print(relativeInput)
+                                #print(relativeInput[0:relativeInput.find("\\")])
+                            #    print(relativeInput)
+                                #print(PreviousRelativeInput)
+                                #print("")
+
+                            indentNum += 1
+                        PreviousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
+                        #print(dryRunInputFile + Fore.CYAN + " --> " + Fore.RESET + dryRunOutputFile)
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
                     os.remove(Path(outputFilenameAndDirectory))  # Delete the file since its not completed
                     sys.exit()
-                except:  # if runProgram gives us an error or warning well jump to the next file
-                    continue
+                #except:  # if runProgram gives us an error or warning well jump to the next file
+                    #print("Error #1")
+                    #continue
     if dryRun is False:
         print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
 

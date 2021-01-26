@@ -9,31 +9,36 @@ from function_addMetadataAndMaps import addMetadataAndMaps
 
 
 def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun):
-
+    wasSkipped = False
     # Check If File Exists
     if forceOverwrite is False:
         if os.path.isfile(outputFileNameAndDirectory):
             print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
             skippedFiles += 1
-            return iterations, failedFiles, warningFiles, infoMessages, skippedFiles  # Skip this loop were done here
+            wasSkipped = True
+            return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped  # Skip this loop were done here
 
-    #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
-    overwriteOption = "-n"
-    if forceOverwrite is True:
-        overwriteOption = "-y"
-    iterations += 1  # Log how many files we change
-
-    try:  # Skip loop if theres a problem with the file
-        metadataTable, totalNumOfStreams = getAndSaveMetadata(filename, filenameAndDirectory, currentOS)  # Get metadata
-    except:
-        failedFiles += 1  # Add to failed count
-        iterations -= 1  # Remove from successful count
-        return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
-
-    # Process metadata
-    metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
-
+    dryRunInputFile = ""
+    dryRunOutputFile = ""
     if dryRun is False:
+
+        #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
+        overwriteOption = "-n"
+        if forceOverwrite is True:
+            overwriteOption = "-y"
+        iterations += 1  # Log how many files we change
+
+        try:  # Skip loop if theres a problem with the file
+            metadataTable, totalNumOfStreams = getAndSaveMetadata(filename, filenameAndDirectory, currentOS)  # Get metadata
+        except:
+            failedFiles += 1  # Add to failed count
+            iterations -= 1  # Remove from successful count
+            return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
+
+        # Process metadata
+        metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
+
+
         print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
 
         # Time for FFmpeg to do its thing:
@@ -66,11 +71,9 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
                     os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
                 except:
                     print(":o Could not delete " + outputFileNameAndDirectory)
-                return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
+                return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
 
         packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
         print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
-    else:
-        print(Fore.CYAN + "Dry Run: " + Fore.RESET + filenameAndDirectory + Fore.CYAN + " --> " + Fore.RESET + outputFileNameAndDirectory)
 
-    return iterations, failedFiles, warningFiles, infoMessages, skippedFiles
+    return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
