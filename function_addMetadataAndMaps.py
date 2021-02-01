@@ -59,12 +59,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                     streamTitle = "\"English, Full Subtitles"  # We'll rename for this
                     defaultEngSubFound = True
                     break
-
-        tempList = ["commentary", "comment"]
-        for item in tempList:
-            if item in metaTitle:
-                streamTitle = "\"Commentary"
-                break
+            tempList = ["commentary", "comment"]
+            for item in tempList:
+                if item in metaTitle:
+                    streamTitle = "\"Commentary"
+                    break
 
         if addAudioInfo is True:
             if metaChannels == "2":
