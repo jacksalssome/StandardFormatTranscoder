@@ -55,7 +55,7 @@ forceOverwrite = False
 noDirInputted = False
 dryRun = False
 
-print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder, By Jacksalssome")
+print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder, by Jacksalssome")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
@@ -268,7 +268,8 @@ elif runRecursive is False:
                 iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
 
                 if dryRun is True and wasSkipped is False:
-                    print("    " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                    iterations += 1
+                    print("-   " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
                 elif dryRun is True:
                     print("    " + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
 
