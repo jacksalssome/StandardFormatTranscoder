@@ -10,6 +10,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     outputTable.border = False
     outputTable.header = False
     defaultStreams = []
+    defaultEngSubFound = False
 
     # Adding titles and making output prettyTable
     for lineNum in range(0, totalNumOfStreams):
@@ -27,7 +28,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
         if "signs" in metaTitle or "songs" in metaTitle:
             streamTitle += "Signs / Songs"
-            metaLang = "und"  # We'll und signs/song
+            metaLang = "SignsSongs"  # We'll und signs/song
         elif metaLang == "jpn":
             streamTitle += "Japanese"
         elif metaLang == "eng":
@@ -56,7 +57,14 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                 if item in metaTitle:
                     addDefault = True
                     streamTitle = "\"English, Full Subtitles"  # We'll rename for this
+                    defaultEngSubFound = True
                     break
+
+        tempList = ["commentary", "comment"]
+        for item in tempList:
+            if item in metaTitle:
+                streamTitle = "\"Commentary"
+                break
 
         if addAudioInfo is True:
             if metaChannels == "2":
@@ -102,7 +110,8 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             engSubFound = True
             break
         elif findEngSub(outputTable, tempNum) is True:
-            engSubFound = True
+            if defaultEngSubFound is False:  # check if a default eng sub has been set
+                engSubFound = True
             listOfEngSubs.append(tempNum)
         elif findJpnAudio(outputTable, tempNum) is True:
             defaultStreams[tempNum] = True
@@ -111,11 +120,12 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             engAudioFound = True
         tempNum += 1
 
-    if len(listOfEngSubs) == 1:
-        defaultStreams[engSub] = True
-    elif len(listOfEngSubs) >= 2:
-        row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
-        defaultStreams[row] = True
+    if jpnAudioFound is True or engAudioFound is False:
+        if len(listOfEngSubs) == 1:
+            defaultStreams[engSub] = True
+        elif len(listOfEngSubs) >= 2:
+            row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
+            defaultStreams[row] = True
 
     outputTable.add_column('IsDefault', defaultStreams)  # Add IsDefault to Table
 
@@ -137,9 +147,10 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     for item in range(0, len(outLang)):
         # Things We Want To Remove:
         if jpnAudioFound is True:
-            if outCodecType[tempNum] == "subtitle" and outLang[tempNum] == "und":
-                outputTable.del_row(tempNum - deletedRows)  # Delete the current table row
-                deletedRows += 1  # So we can track how many rows are missing (This took a day to figure out)
+            if outCodecType[tempNum] == "subtitle" and (outLang[tempNum] == "und" or outLang[tempNum] == "jpn"):
+                if not outLang[tempNum] == "SignsSongs":
+                    outputTable.del_row(tempNum - deletedRows)  # Delete the current table row
+                    deletedRows += 1  # So we can track how many rows are missing (This took a day to figure out)
             elif outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
@@ -168,10 +179,11 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     outputDisposition = ""
     for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
         disposition = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
-        if row is True:
-            outputDisposition += " -disposition:" + str(disposition).replace("[\'", "").replace("\']", "") + " default"
-        elif row is False:
-            outputDisposition += " -disposition:" + str(disposition).replace("[\'", "").replace("\']", "") + " 0"
+        isItDefault = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["IsDefault"]).split()
+        if "True" in isItDefault:
+            outputDisposition += " -disposition:" + str(tempNum).replace("[\'", "").replace("\']", "") + " default"
+        elif "False" in isItDefault:
+            outputDisposition += " -disposition:" + str(tempNum).replace("[\'", "").replace("\']", "") + " 0"
         tempNum += 1
 
     tempNum = 0
@@ -191,6 +203,8 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         tempNum += 1
 
     metadataAndMaps = outputMetadata + outputDisposition + outputMaps
+
+    #print(outputDisposition)
 
     #outputTable.border = True
     #outputTable.header = True

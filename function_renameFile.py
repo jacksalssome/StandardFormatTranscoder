@@ -18,13 +18,19 @@ def checkForDups(tempList):  # List duplication checker
         print("Duplicates found in List: " + str(dupes))
 
 
-def renameFile(filename):
+def renameFile(currentOS, filenameAndDirectory, filename):
 
     # Need to be able to handle triple digits eg ep 123
 
     removeStrings = [  # Remove all strings listed (Note: case and order doesn't matter)
-        "()",
+        "[BD 2160p 4K UHD][HEVC x265 10bit][Dual-Audio][Multi-Subs]",
+        "[BD 2160p 4K UHD]",
+        "[HEVC x265 10bit]",
+        " 4k ",
+        " UHD",
+        "2160p",
         "[]",
+        "()",
         "{}",
         "[Web 1080p HEVC Multi]",
         "(1080p BluRay x265 HEVC 10bit EAC3 2.0 SAMPA)",
@@ -361,6 +367,7 @@ def renameFile(filename):
         ".1080p.BluRay.x265.HEVC.10bit.5,1ch(xxxpav69)",
         "(xxxpav69)",
         "BR EAC3 VFF ENG 1080p x265 10Bits T0M",
+        "BR EAC3 VFF VFQ ENG 1080p x265 10Bits T0M",
         ".1080p.AMZN.WEBRip.DDP5.1.x264-TEPES[rarbg]",
         "[YTS.AM]",
         "-Judas[TGx]",
@@ -761,9 +768,13 @@ def renameFile(filename):
     outputFilename = outputFilename.replace("- ", " ")
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one, yes we do this twice
-
+    outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
     outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably a ep number
-    outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number.
+
+    if re.search("\s[0-9]{2}$", outputFilename):
+        from function_getRuntime import getRuntime
+        if getRuntime(currentOS, filenameAndDirectory, filename) < 4001:  # if over 1.1 hours long, its prob not an episode
+            outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number, only on .mkv files
 
     outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
     outputFilename += ".mkv"  # Add extension

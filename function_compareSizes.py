@@ -13,7 +13,7 @@ def compareSizes(streamNum, filename, currentOS):
     if currentOS == "Linux":
         output = str(subprocess.check_output("ffprobe -v error -show_packets -select_streams " + str(streamNum) + " -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \"" + filename + "\"", shell=False))
     elif currentOS == "Windows":
-        output = str(subprocess.check_output("cmd /c ffprobe -v error -show_packets -select_streams "+str(streamNum)+" -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \""+filename+"\"", shell=False))
+        output = str(subprocess.check_output("cmd /c ffprobe -v error -show_packets -select_streams " + str(streamNum) + " -show_entries packet=size -of default=nokey=1:noprint_wrappers=1 \"" + filename+"\"", shell=False))
 
     cleanOutput = re.sub("[b']", "", output)
     cleanOutput = cleanOutput.replace("\\r", "")

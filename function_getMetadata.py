@@ -3,6 +3,7 @@ from colorama import Fore
 import subprocess
 
 
+
 def getAndSaveMetadata(filename, filenameAndDirectory, currentOS):
 
     # Overview: Call ffmpeg for an output, save to file, read that file line by line in to a PrettyTable for processing. Plus the number of streams.

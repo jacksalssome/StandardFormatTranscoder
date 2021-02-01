@@ -13,13 +13,12 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
     # Check If File Exists
     if forceOverwrite is False:
         if os.path.isfile(outputFileNameAndDirectory):
-            print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
+            if dryRun is False:
+                print(Fore.MAGENTA + "All ready exists: " + outputFileName + Fore.RESET)
             skippedFiles += 1
             wasSkipped = True
             return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped  # Skip this loop were done here
 
-    dryRunInputFile = ""
-    dryRunOutputFile = ""
     if dryRun is False:
 
         #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
@@ -27,6 +26,8 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         if forceOverwrite is True:
             overwriteOption = "-y"
         iterations += 1  # Log how many files we change
+
+        print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
 
         try:  # Skip loop if theres a problem with the file
             metadataTable, totalNumOfStreams = getAndSaveMetadata(filename, filenameAndDirectory, currentOS)  # Get metadata
@@ -38,7 +39,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         # Process metadata
         metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
 
-
+        #print("test")
         print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
 
         # Time for FFmpeg to do its thing:
@@ -51,18 +52,32 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
 
         if len(str(errorCheck.stderr)) > 8:  # Integrity and error check
             if str(errorCheck.stderr).find("Referenced QT chapter track not found") != -1:
-                print(filename + Fore.CYAN + ": Was not encoded to specification" + Fore.RESET)
+                print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
                 infoMessages += 1
+                return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
             elif str(errorCheck.stderr).find("already exists. Exiting.") != -1:
                 print("already exists")
+                #infoMessages += 1
+            elif "unknown timestamp" in str(errorCheck.stderr):
+                print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
+                infoMessages += 1
+                return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
+            elif "Non-monotonous DTS" in str(errorCheck.stderr):
+                print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
+                infoMessages += 1
+                return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
             else:
                 errorOutput = re.sub("b\"", "", str(errorCheck.stderr))
                 errorOutput = re.sub("b\'", "", errorOutput)
                 errorOutput = re.sub(r"\\r\\n\'", "", errorOutput)
                 errorOutput = re.sub(r"\\r\\n\"", "", errorOutput)
                 errorOutput = re.sub(r"\\r\\n", "", errorOutput)
-                print(Fore.YELLOW + "FFmpeg Error: " + "\"" + Fore.RESET + errorOutput + Fore.YELLOW + "\"" + Fore.RESET)
-
+                ffmpegErrors = (errorOutput.replace("[matroska @", "\n[matroska @")).splitlines()
+                if len(ffmpegErrors) > 1:
+                    del ffmpegErrors[0]  # First index is a newline
+                print(Fore.YELLOW + "FFmpeg Error: " + Fore.RESET + ffmpegErrors[0])
+                for i in range(1, len(ffmpegErrors)):
+                    print("              " + ffmpegErrors[i])
                 packingSpaces = ' ' * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.YELLOW + "May Be Corrupted: " + filename + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
                 print(Fore.YELLOW + "May Be Corrupted: " + Fore.RESET + filename + Fore.YELLOW + ", so it was not copied" + Fore.RESET + packingSpaces)
                 warningFiles += 1
@@ -70,7 +85,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
                 try:
                     os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its corrupted
                 except:
-                    print(":o Could not delete " + outputFileNameAndDirectory)
+                    print(":o Could not remove: " + outputFileNameAndDirectory)
                 return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
 
         packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print

@@ -46,7 +46,6 @@ except:
 # TODO:
 # Add -o --output, so user can specify and output dir
 
-
 inputDirectory = ""
 outputDirectory = ""
 runRecursive = False
@@ -56,7 +55,7 @@ forceOverwrite = False
 noDirInputted = False
 dryRun = False
 
-print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder")
+print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder, By Jacksalssome")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
@@ -189,7 +188,7 @@ if runRecursive is True:
                 inputDirectory = inputDirectory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
                 if runRename is True:
-                    outputFilename = renameFile(inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
+                    outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
                     outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
 
@@ -201,12 +200,10 @@ if runRecursive is True:
                 try:
                     iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
 
-                    if dryRun is True and wasSkipped is False:
+                    if dryRun is True:
 
                         relativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         relativeOutput = outputFilenameAndDirectory.replace(outputDirectory, "")
-
-
 
                         if iterations == 0:
                             print("")
@@ -220,42 +217,25 @@ if runRecursive is True:
                         for i in relativeInput:
 
                             slash = relativeInput.find("\\")
-                            #print(slash, len(dryRunInputFile))
-                            #print(dryRunInputFile[0:slash + 1])
                             relativeInput = relativeInput[slash + 1:len(relativeInput) + 2]
-                            #print("   " * indentNum + relativeInput[0:relativeInput.find("\\")])
-
-                            #print(basename(Path(relativeInput)))
-                            #breakpoint()
 
                             if PreviousRelativeInput.find(relativeInput[0:relativeInput.find("\\")]) == -1 and relativeInput.find("\\") != -1:
                                 #print("TRUE")
                                 print(Fore.CYAN + "    " * indentNum + relativeInput[0:relativeInput.find("\\")] + Fore.RESET)
-                                #print("")
-                                #print("BAD")
-                                #print(relativeInput)
-                                #print(relativeInput[0:relativeInput.find("\\")])
-                                #print(relativeInput[0:relativeInput.find("\\")].find(relativeInput))
-                                #print("")
-
 
                             elif relativeInput.find("\\") == -1:
-                                print("    " * indentNum + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                                if wasSkipped is False:
+                                    print("    " * indentNum + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                                    iterations += 1
+                                elif wasSkipped is True:
+                                    print("    " * indentNum + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
                                 break
-
-                            #else:
-                                #print("")
-                            # print(PreviousRelativeInput)
-                            #    print("BAD")
-                            #    print(relativeInput)
-                                #print(relativeInput[0:relativeInput.find("\\")])
-                            #    print(relativeInput)
-                                #print(PreviousRelativeInput)
-                                #print("")
 
                             indentNum += 1
                         PreviousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         #print(dryRunInputFile + Fore.CYAN + " --> " + Fore.RESET + dryRunOutputFile)
+
+
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
@@ -271,8 +251,10 @@ elif runRecursive is False:
     for inputFilename in os.listdir(inputDirectory):
         if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
 
+            inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
+
             if runRename is True:  # Rename File
-                outputFilename = renameFile(inputFilename)  # Call up function renameFile
+                outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename)  # Call up function renameFile
             else:  # keep file name
                 outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
             if noDirInputted is True:
@@ -282,16 +264,19 @@ elif runRecursive is False:
             elif noDirInputted is False:
                 outputFileNameAndDirectory = outputDirectory + fileSlashes + outputFilename
 
-            inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
             try:
-                iterations, failedFiles, warningFiles, infoMessages, skippedFiles = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+                iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+
+                if dryRun is True and wasSkipped is False:
+                    print("    " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                elif dryRun is True:
+                    print("    " + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
+
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")
                 os.remove(Path(outputFileNameAndDirectory))  # Delete the file since its not done
                 sys.exit()
-            except:  # if runProgram gives us an error or warning well jump to the next file
-                continue
 
 # Info on number of files processed, warnings and errors
 if iterations != 0:
@@ -300,7 +285,7 @@ if iterations != 0:
     else:
         print(Fore.CYAN + "Finished", iterations, "files" + Fore.RESET)
 if skippedFiles != 0:
-    print(Fore.CYAN + "Skipped", iterations, "files" + Fore.RESET)
+    print(Fore.CYAN + "Skipped", skippedFiles, "files" + Fore.RESET)
 if infoMessages != 0:
     print(Fore.CYAN + str(infoMessages) + " Info Messages" + Fore.RESET)
 if failedFiles != 0:

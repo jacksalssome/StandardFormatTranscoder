@@ -19,7 +19,8 @@ def findJpnAudio(outputTable, row):
 def findEngAudio(outputTable, row):
     outLang = (outputTable.get_string(start=row, end=row + 1, fields=["Language"]).strip()).lower()
     outCodecType = (outputTable.get_string(start=row, end=row + 1, fields=["CodecType"]).strip()).lower()
+    outTitle = (outputTable.get_string(start=row, end=row + 1, fields=["Title"]).strip()).lower()
 
-    if outCodecType == "audio" and outLang == "eng":
+    if outCodecType == "audio" and outLang == "eng" and "commentary" not in outTitle:  # Make sure commentary isn't default if theres a foreign audio and a eng commentary
         return True
     return False
