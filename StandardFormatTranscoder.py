@@ -121,10 +121,7 @@ elif not args.output:  # Output missing
             sys.exit()
         else:
             print("Please enter yes or no.")
-if args.output == args.input:
-    print("Input and output are the same")
-    input("Press Enter to exit...")
-    sys.exit()
+
 # ---- Input ----
 if args.input is not None:
     if os.path.exists(args.input):
@@ -166,6 +163,8 @@ warningFiles = 0
 infoMessages = 0
 skippedFiles = 0
 
+tempIterations = 0
+
 if runRecursive is True:
     parentDirectoryName = basename(inputDirectory)
     if noDirInputted is True:
@@ -205,13 +204,10 @@ if runRecursive is True:
                         relativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         relativeOutput = outputFilenameAndDirectory.replace(outputDirectory, "")
 
-                        if iterations == 0:
+                        if tempIterations == 0:
                             print("")
                             print(Fore.CYAN + inputFilenameAndDirectory.replace(relativeInput, "") + "\\" + Fore.MAGENTA + " ---> " + Fore.CYAN + outputFilenameAndDirectory.replace(relativeOutput, "") + "\\" + Fore.RESET)
-                            iterations += 1
-
-                        if runRename is False:  # No need to display names changes because there are none.
-                            break
+                            tempIterations += 1
 
                         indentNum = 1
                         for i in relativeInput:
@@ -225,7 +221,10 @@ if runRecursive is True:
 
                             elif relativeInput.find("\\") == -1:
                                 if wasSkipped is False:
-                                    print("    " * indentNum + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                                    if runRename is True:
+                                        print("    " * indentNum + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                                    if runRename is False:
+                                        print("    " * indentNum + inputFilename)
                                     iterations += 1
                                 elif wasSkipped is True:
                                     print("    " * indentNum + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
@@ -266,10 +265,13 @@ elif runRecursive is False:
 
             try:
                 iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
-
                 if dryRun is True and wasSkipped is False:
-                    iterations += 1
-                    print("-   " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                    if runRename is True:
+                        print("-   " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
+                        iterations += 1
+                    elif runRename is False:
+                        print("-   " + inputFilename)
+                        iterations += 1
                 elif dryRun is True:
                     print("    " + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
 
