@@ -6,6 +6,14 @@ def findEngSub(outputTable, row):
         return True
     return False
 
+def findSignSong(outputTable, row):
+    outLang = (outputTable.get_string(start=row, end=row + 1, fields=["Language"]).strip()).lower()
+    outCodecType = (outputTable.get_string(start=row, end=row + 1, fields=["CodecType"]).strip()).lower()
+
+    if outCodecType == "subtitle" and outLang == "SignsSongs":
+        return True
+    return False
+
 
 def findJpnAudio(outputTable, row):
     outLang = (outputTable.get_string(start=row, end=row + 1, fields=["Language"]).strip()).lower()

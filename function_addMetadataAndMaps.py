@@ -37,12 +37,12 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             if "english" in metaTitle or "inglês" in metaTitle:
                 streamTitle += "English"
                 metaLang = "eng"
-                print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
+                #print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
                 infoMessages += 1
             elif "japanese" in metaTitle or "japonês" in metaTitle:
                 streamTitle += "Japanese"
                 metaLang = "jpn"
-                print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
+                #print(Fore.CYAN + "Found Sub/Audio Title Via Backup way" + Fore.RESET)
                 infoMessages += 1
             else:  # No eng or jpn found:
                 metaLang = "und"
@@ -113,7 +113,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
                 engSubFound = True
             listOfEngSubs.append(tempNum)
         elif findJpnAudio(outputTable, tempNum) is True:
-            defaultStreams[tempNum] = True
+            defaultStreams[tempNum] = "True"
             jpnAudioFound = True
         elif findEngAudio(outputTable, tempNum) is True:
             engAudioFound = True
@@ -121,10 +121,10 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     if jpnAudioFound is True or engAudioFound is False:
         if len(listOfEngSubs) == 1:
-            defaultStreams[engSub] = True
+            defaultStreams[listOfEngSubs[0]] = "True"
         elif len(listOfEngSubs) >= 2:
             row = findBestEngSubStream(listOfEngSubs, filename, currentOS)
-            defaultStreams[row] = True
+            defaultStreams[row] = "True"
 
     outputTable.add_column('IsDefault', defaultStreams)  # Add IsDefault to Table
 
@@ -143,13 +143,17 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     tempNum = 0
     deletedRows = 0
+    addedSubs = 0
     for item in range(0, len(outLang)):
         # Things We Want To Remove:
         if jpnAudioFound is True:
             if outCodecType[tempNum] == "subtitle" and (outLang[tempNum] == "und" or outLang[tempNum] == "jpn"):
                 if not outLang[tempNum] == "SignsSongs":
-                    outputTable.del_row(tempNum - deletedRows)  # Delete the current table row
-                    deletedRows += 1  # So we can track how many rows are missing (This took a day to figure out)
+                    if engSubFound is False and addedSubs == 0:
+                        addedSubs += 1
+                    else:
+                        outputTable.del_row(tempNum - deletedRows)  # Delete the current table row
+                        deletedRows += 1  # So we can track how many rows are missing (This took a day to figure out)
             elif outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
@@ -208,8 +212,6 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     #outputTable.border = True
     #outputTable.header = True
     #print(outputTable.get_string())
-    #outputTable.border = False
-    #outputTable.header = False
 
     foreignWarning = False
     return metadataAndMaps, infoMessages
