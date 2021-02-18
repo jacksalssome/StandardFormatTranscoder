@@ -169,7 +169,8 @@ if runRecursive is True:
     parentDirectoryName = basename(inputDirectory)
     if noDirInputted is True:
         outputDirectory = str(Path(inputDirectory).parent) + fileSlashes + "SFT output of; " + parentDirectoryName
-    PreviousRelativeInput = ""
+    previousRelativeInput = ""
+    previousOutputFilename = ""
     for root, dirs, files in os.walk(inputDirectory):  # find the root, the directories and files.
         skipThis = False
         for currentDir in dirs:  # Stop the Snake from eating its tail (Preventing recursion into own output is user is outputting to a directory in the input directory)
@@ -187,7 +188,7 @@ if runRecursive is True:
                 inputDirectory = inputDirectory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
                 if runRename is True:
-                    outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename)  # Call up function renameFile | Don't have to mess with extension because the function does it.
+                    outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename, dryRun)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
                     outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
 
@@ -215,7 +216,7 @@ if runRecursive is True:
                             slash = relativeInput.find("\\")
                             relativeInput = relativeInput[slash + 1:len(relativeInput) + 2]
 
-                            if PreviousRelativeInput.find(relativeInput[0:relativeInput.find("\\")]) == -1 and relativeInput.find("\\") != -1:
+                            if previousRelativeInput.find(relativeInput[0:relativeInput.find("\\")]) == -1 and relativeInput.find("\\") != -1:
                                 #print("TRUE")
                                 print(Fore.CYAN + "    " * indentNum + relativeInput[0:relativeInput.find("\\")] + Fore.RESET)
 
@@ -231,7 +232,8 @@ if runRecursive is True:
                                 break
 
                             indentNum += 1
-                        PreviousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
+                        previousOutputFilename = outputFilename[:-4]  # For renameFile
+                        previousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         #print(dryRunInputFile + Fore.CYAN + " --> " + Fore.RESET + dryRunOutputFile)
 
 

@@ -18,7 +18,7 @@ def checkForDups(tempList):  # List duplication checker
         print("Duplicates found in List: " + str(dupes))
 
 
-def renameFile(currentOS, filenameAndDirectory, filename):
+def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename, dryRun):
 
     # Need to be able to handle triple digits eg ep 123
 
@@ -769,12 +769,15 @@ def renameFile(currentOS, filenameAndDirectory, filename):
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one, yes we do this twice
     outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
-    outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably a ep number
+    outputFilename = re.sub("\s([0-9][0-9])\s", r" E\1 ", outputFilename)  # Replace (space + 02 + space) If there are double digits left at is stage this its probably an Ep number
 
     if re.search("\s[0-9]{2}$", outputFilename):
-        from function_getRuntime import getRuntime
-        if getRuntime(currentOS, filenameAndDirectory, filename) < 4001:  # if over 1.1 hours long, its prob not an episode
-            outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number, only on .mkv files
+        if previousOutputFilename[:-2] == (re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename).strip())[:-2]:  # Optimize if everything but the last two characters are the same
+            outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)
+        else:
+            from function_getRuntime import getRuntime
+            if getRuntime(currentOS, filenameAndDirectory, filename) < 4001:  # if over 1.1 hours long, its prob not an episode
+                outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number, only on .mkv files
 
     outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces
     outputFilename += ".mkv"  # Add extension
