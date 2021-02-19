@@ -232,10 +232,10 @@ if runRecursive is True:
                                 break
 
                             indentNum += 1
-                        previousOutputFilename = outputFilename[:-4]  # For renameFile
+
                         previousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         #print(dryRunInputFile + Fore.CYAN + " --> " + Fore.RESET + dryRunOutputFile)
-
+                    previousOutputFilename = outputFilename[:-4]  # For renameFile
 
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
@@ -249,13 +249,14 @@ if runRecursive is True:
         print(Fore.CYAN + "Your files are in: \"" + Fore.RESET + outputDirectory + fileSlashes + Fore.CYAN + "\"" + Fore.RESET)  # Program is almost done, so we'll make sure the user knows where their files are.
 
 elif runRecursive is False:
+    previousOutputFilename = ""
     for inputFilename in os.listdir(inputDirectory):
         if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
 
             inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
 
             if runRename is True:  # Rename File
-                outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename)  # Call up function renameFile
+                outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename, dryRun)  # Call up function renameFile
             else:  # keep file name
                 outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
             if noDirInputted is True:
@@ -276,6 +277,7 @@ elif runRecursive is False:
                         iterations += 1
                 elif dryRun is True:
                     print("    " + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
+                previousOutputFilename = outputFilename[:-4]  # For renameFile
 
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
