@@ -6,6 +6,7 @@ def findEngSub(outputTable, row):
         return True
     return False
 
+
 def findSignSong(outputTable, row):
     outLang = (outputTable.get_string(start=row, end=row + 1, fields=["Language"]).strip()).lower()
     outCodecType = (outputTable.get_string(start=row, end=row + 1, fields=["CodecType"]).strip()).lower()

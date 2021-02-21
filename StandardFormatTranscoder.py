@@ -18,11 +18,11 @@ from function_filePathCheck import filePathCheck, checkIfPathIsAFile
 # Add --Keep "Audio Subtitles Video Attachments"
 
 #Note
-# Try to keep outputs yo terminal/console below 120 characters
+# Try to keep outputs to terminal/console below 120 characters
 
-init()  # Makes sure windows displays colour. KEEP AT TOP
+init()  # Makes sure windows displays colour. --KEEP AT TOP--
 
-# Check Platform
+# Check Platform, set file path slashes
 if platform.system() == "Linux":
     fileSlashes = "/"
     currentOS = "Linux"
@@ -43,24 +43,15 @@ except:
     input("Press Enter to exit...")
     sys.exit()
 
-# TODO:
-# Add -o --output, so user can specify and output dir
-
-inputDirectory = ""
-outputDirectory = ""
-runRecursive = False
-runRename = False
-engAudioNoSubs = False
-forceOverwrite = False
-noDirInputted = False
-dryRun = False
+inputDirectory, outputDirectory = "", ""
+runRecursive, runRename, engAudioNoSubs, forceOverwrite, noDirInputted, dryRun = False, False, False, False, False, False
 
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder, by Jacksalssome")
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--force', action='store_true', help="\"Force Overwrite\"")
-parser.add_argument('-i', '--input', help="\"input directory\"")
-parser.add_argument('-o', '--output', help="\"output directory\"")
+parser.add_argument('--overwrite', action='store_true', help="Overwrites files if they already exist")
+parser.add_argument('-i', '--input', help="input directory")
+parser.add_argument('-o', '--output', help="output directory")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
 parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
@@ -146,7 +137,7 @@ if args.output is not None:
 
 if args.engAudioNoSubs is True:  # If -r or --recursive is present then enable recursive
     engAudioNoSubs = True
-if args.force is True:  # If -r or --recursive is present then enable recursive
+if args.overwrite is True:  # If -r or --recursive is present then enable recursive
     forceOverwrite = True
 if args.recursive is True:  # If -r or --recursive is present then enable recursive
     runRecursive = True
@@ -157,13 +148,7 @@ if args.DryRun is True:
 
 # print(os.listdir(inputDirectory))
 
-iterations = 0
-failedFiles = 0
-warningFiles = 0
-infoMessages = 0
-skippedFiles = 0
-
-tempIterations = 0
+iterations, failedFiles, warningFiles, infoMessages, skippedFiles, tempIterations = 0, 0, 0, 0, 0, 0
 
 if runRecursive is True:
     parentDirectoryName = basename(inputDirectory)
@@ -184,42 +169,31 @@ if runRecursive is True:
             continue
         for inputFilename in files:  # Iterate over every file
             if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # If current file is an MKV, MP4 or M4V
-
                 inputDirectory = inputDirectory
                 inputFilenameAndDirectory = root + fileSlashes + inputFilename  # Absolute path of input file
                 if runRename is True:
                     outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename, dryRun)  # Call up function renameFile | Don't have to mess with extension because the function does it.
                 else:
                     outputFilename = inputFilename[:-4] + ".mkv"  # Remove last 4 characters = .m4v or .mp4, etc and replace with .mkv
-
                 outputFilenameAndDirectory = root.replace(inputDirectory, outputDirectory) + fileSlashes + outputFilename
-
                 if dryRun is False:
                     Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
-
                 try:
                     iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
-
                     if dryRun is True:
-
                         relativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         relativeOutput = outputFilenameAndDirectory.replace(outputDirectory, "")
-
                         if tempIterations == 0:
                             print("")
                             print(Fore.CYAN + inputFilenameAndDirectory.replace(relativeInput, "") + "\\" + Fore.MAGENTA + " ---> " + Fore.CYAN + outputFilenameAndDirectory.replace(relativeOutput, "") + "\\" + Fore.RESET)
                             tempIterations += 1
-
                         indentNum = 1
                         for i in relativeInput:
-
                             slash = relativeInput.find("\\")
                             relativeInput = relativeInput[slash + 1:len(relativeInput) + 2]
-
                             if previousRelativeInput.find(relativeInput[0:relativeInput.find("\\")]) == -1 and relativeInput.find("\\") != -1:
                                 #print("TRUE")
                                 print(Fore.CYAN + "    " * indentNum + relativeInput[0:relativeInput.find("\\")] + Fore.RESET)
-
                             elif relativeInput.find("\\") == -1:
                                 if wasSkipped is False:
                                     if runRename is True:
@@ -230,13 +204,10 @@ if runRecursive is True:
                                 elif wasSkipped is True:
                                     print("    " * indentNum + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
                                 break
-
                             indentNum += 1
-
                         previousRelativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         #print(dryRunInputFile + Fore.CYAN + " --> " + Fore.RESET + dryRunOutputFile)
                     previousOutputFilename = outputFilename[:-4]  # For renameFile
-
                 except KeyboardInterrupt:  # Handling CTRL+C
                     print("")  # Dealing with the end='/r' in runProgram
                     print("CTRL+C pressed, Exiting...")
@@ -252,9 +223,7 @@ elif runRecursive is False:
     previousOutputFilename = ""
     for inputFilename in os.listdir(inputDirectory):
         if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
-
             inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
-
             if runRename is True:  # Rename File
                 outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename, dryRun)  # Call up function renameFile
             else:  # keep file name
@@ -265,7 +234,6 @@ elif runRecursive is False:
                     Path(inputDirectory + fileSlashes + "SFT output" + fileSlashes).mkdir(parents=True, exist_ok=True)  # Make Dir
             elif noDirInputted is False:
                 outputFileNameAndDirectory = outputDirectory + fileSlashes + outputFilename
-
             try:
                 iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
                 if dryRun is True and wasSkipped is False:
@@ -278,7 +246,6 @@ elif runRecursive is False:
                 elif dryRun is True:
                     print("    " + Fore.MAGENTA + outputFilename + " (Already Exists)" + Fore.RESET)
                 previousOutputFilename = outputFilename[:-4]  # For renameFile
-
             except KeyboardInterrupt:  # Handling CTRL+C
                 print("")  # Dealing with the end='/r' in runProgram
                 print("CTRL+C pressed, Exiting...")

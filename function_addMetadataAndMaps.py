@@ -7,10 +7,8 @@ from function_getNumOfAudioAndSubs import *
 def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages):
 
     outputTable = PrettyTable(["Index", "Title", "Language", "CodecType", "CodecName"])
-    outputTable.border = False
-    outputTable.header = False
+    outputTable.border, outputTable.header, defaultEngSubFound = False, False, False
     defaultStreams = []
-    defaultEngSubFound = False
 
     # Adding titles and making output prettyTable
     for lineNum in range(0, totalNumOfStreams):
@@ -98,11 +96,8 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     # ---- END FOR LOOP ----
 
-    jpnAudioFound = False
-    engAudioFound = False
+    jpnAudioFound, engSubFound, engAudioFound = False, False, False
     listOfEngSubs = []
-    engSubFound = False
-    engSub = 0
     tempNum = 0
     for i in outputTable:
         if findEngSub(outputTable, tempNum) is True and defaultStreams[tempNum] is True:
@@ -129,9 +124,8 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     outputTable.add_column('IsDefault', defaultStreams)  # Add IsDefault to Table
 
     tempNumber = 0
-    outLang = []
-    outCodecType = []
-    outCodecName = []
+    outCodecType, outCodecName, outLang = [], [], []
+
     for i in outputTable:
         # Cant work directly on the prettyTable, or it will delete the rows your working on, even it you tell it to delete from another table
         # So i cheat and convert the columns i need to lists, why did i make a table in the first place?
@@ -141,9 +135,8 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
         outCodecName.append(str(outputTable.get_string(start=tempNumber, end=tempNumber + 1, fields=["CodecName"]).strip()))
         tempNumber += 1
 
-    tempNum = 0
-    deletedRows = 0
-    addedSubs = 0
+    tempNum, addedSubs, deletedRows = 0, 0, 0
+
     for item in range(0, len(outLang)):
         # Things We Want To Remove:
         if jpnAudioFound is True:
@@ -181,7 +174,6 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     tempNum = 0
     outputDisposition = ""
     for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
-        disposition = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
         isItDefault = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["IsDefault"]).split()
         if "True" in isItDefault:
             outputDisposition += " -disposition:" + str(tempNum).replace("[\'", "").replace("\']", "") + " default"
@@ -213,5 +205,4 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
     #outputTable.header = True
     #print(outputTable.get_string())
 
-    foreignWarning = False
     return metadataAndMaps, infoMessages

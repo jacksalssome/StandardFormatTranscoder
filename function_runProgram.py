@@ -20,28 +20,22 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
             return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped  # Skip this loop were done here
 
     if dryRun is False:
-
         #print(Fore.BLUE + "Started: " + filename + Fore.RESET)  # Debugging
         overwriteOption = "-n"
         if forceOverwrite is True:
             overwriteOption = "-y"
         iterations += 1  # Log how many files we change
-
         print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
-
         try:  # Skip loop if theres a problem with the file
             metadataTable, totalNumOfStreams = getAndSaveMetadata(filename, filenameAndDirectory, currentOS)  # Get metadata
         except:
             failedFiles += 1  # Add to failed count
             iterations -= 1  # Remove from successful count
             return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
-
         # Process metadata
         metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
-
         #print("test")
         print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
-
         # Time for FFmpeg to do its thing:
         if currentOS == "Linux":
             #print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" +  metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
@@ -49,7 +43,6 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         elif currentOS == "Windows":
             #print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
             errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
-
         if len(str(errorCheck.stderr)) > 8:  # Integrity and error check
             if str(errorCheck.stderr).find("Referenced QT chapter track not found") != -1:
                 print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
@@ -87,7 +80,6 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
                 except:
                     print(":o Could not remove: " + outputFileNameAndDirectory)
                 return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
-
         packingSpaces = " " * (len(Fore.BLUE + "Started: " + filename + Fore.RESET) - len(Fore.GREEN + "Done: " + outputFileName + Fore.RESET))  # Pack the output with spaces or there will be characters left from the overwritten print
         print(Fore.GREEN + "Done: " + outputFileName + Fore.RESET + packingSpaces)
 
