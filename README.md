@@ -1,5 +1,5 @@
 # StandardFormatTranscoder
-<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF-Github-Page.png" alt="SMF logo" width="50%" />
+<img src="https://github.com/jacksalssome/StandardFormatTranscoder/blob/main/images/SMF-Github-Page.gif" alt="SMF logo" width="50%" />
                                                                                                                       
 ## Overview
 
