@@ -4,7 +4,7 @@ from function_findBestEngSubStream import findBestEngSubStream
 from function_getNumOfAudioAndSubs import *
 
 
-def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages):
+def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, ifEngAudioThenNoSubs, infoMessages):
 
     outputTable = PrettyTable(["Index", "Title", "Language", "CodecType", "CodecName"])
     outputTable.border, outputTable.header, defaultEngSubFound = False, False, False
@@ -154,7 +154,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
             if outCodecType[tempNum] == "audio" and outLang[tempNum] == "und":
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
-            elif outCodecType[tempNum] == "subtitle" and engAudioNoSubs is True:  # Remove all subs if engAudioNoSubs is True
+            elif outCodecType[tempNum] == "subtitle" and ifEngAudioThenNoSubs is True:  # Remove all subs if ifEngAudioThenNoSubs is True
                 outputTable.del_row(tempNum - deletedRows)
                 deletedRows += 1
         elif engAudioFound is False:  # Theres no JPN AUDIO if the program got to here
@@ -173,7 +173,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     tempNum = 0
     outputDisposition = ""
-    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+    for i in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
         isItDefault = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["IsDefault"]).split()
         if "True" in isItDefault:
             outputDisposition += " -disposition:" + str(tempNum).replace("[\'", "").replace("\']", "") + " default"
@@ -183,7 +183,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     tempNum = 0
     outputMetadata = ""
-    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+    for i in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
         title = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Title"]).split()
         language = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Language"]).split()
         outputMetadata += " -metadata:s:" + str(tempNum) + " title=" + str(title).replace("[\'", "").replace("\']", "").replace("\', \'", " ")
@@ -192,7 +192,7 @@ def addMetadataAndMaps(filename, metadataTable, totalNumOfStreams, currentOS, en
 
     outputMaps = ""
     tempNum = 0
-    for row in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
+    for i in outputTable:  # Convert to output streams, e.g. -map 0:0, -map 0:1, -map 0:2
         mapNum = outputTable.get_string(start=tempNum, end=tempNum + 1, fields=["Index"]).split()
         outputMaps += " -map 0:" + str(mapNum).replace("[\'", "").replace("\']", "")  # -map 0:3
         tempNum += 1

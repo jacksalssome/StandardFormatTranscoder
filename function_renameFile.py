@@ -23,6 +23,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     # Need to be able to handle triple digits eg ep 123
 
     removeStrings = [  # Remove all strings listed (Note: case and order doesn't matter)
+        ".1080p.x265-ZMNT",
+        "ZMNT",
         "[BD 2160p 4K UHD][HEVC x265 10bit][Dual-Audio][Multi-Subs]",
         "[BD 2160p 4K UHD]",
         "[HEVC x265 10bit]",
@@ -447,6 +449,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[AVC AAC]",
         "[CHT]",
         "[MP4]",
+        " DC ",
+        "Open Matte",
+        "UNRATED",
         "ITA-JAP Ac3 5.1 BDRip 1080p H264 [ArMor]",
         "ITA-JAP",
         "[WEBRip 1080p HEVC]",
@@ -601,6 +606,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(2160p x265 q19",
         "(2160p x265 q18",
         "(2160p x265 HEVC AAC 5.1 Joy)",
+        "1080p 10bit Bluray x265 HEVC English DDP 5.1 ESub ~ TombDoc",
+        "TombDoc",
         "2160p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy UTR",
         "2160p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
         "1080p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
@@ -614,6 +621,10 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(1080p WEB-DL x265 Panda)",
         "(Bd 1080P Hi10 Flac)",
         "EAC3",
+        "Theatrical",
+        "Theatrical Cut",
+        "Directors",
+        "Directors Cut",
         ]
 
     # simpleList = [
@@ -700,6 +711,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
             # covert strings to lowercase, why? because re.sub and []() don't work together
             outputFilenameLower = outputFilename.lower()
             itemLower = item.lower()
+            print(item)
             # Beautiful, we don't work on the actual filename, so original uppercase and lowercase is unchanged
             # only subtracting the positions
             outputFilename = outputFilename[:outputFilenameLower.find(itemLower)] + outputFilename[outputFilenameLower.find(itemLower) + len(item):]
@@ -749,8 +761,23 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     outputFilename = outputFilename.replace("( )", "")  # Remove empty brackets
     outputFilename = outputFilename.replace("[ ]", "")  # Remove empty brackets
 
+
+
+    import datetime
+    now = datetime.datetime.now()
+
+    currentDecade = str(now.year)[2]
+    currentYear = str(now.year)[3]
+
+    # Remove numbers 1920 to current year
+
+    outputFilename = re.sub(r"\s20[0-" + currentDecade + "][0-" + currentYear + "]", "", outputFilename)
+    outputFilename = re.sub(r"\s20[0-1][0-9]", "", outputFilename)
+    outputFilename = re.sub(r"\s19[2-9][0-9]", "", outputFilename)
+
     outputFilename = re.sub("\([0-9][0-9][0-9][0-9]\)", "", outputFilename)  # Remove Years eg. (1994) NOTE: Don't remove years with spaces on both sides
     outputFilename = re.sub("\[[0-9][0-9][0-9][0-9]]", "", outputFilename)  # [1994]
+
 
     outputFilename = re.sub(r"ep ([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep 13 to E13
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
@@ -781,7 +808,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
             outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)
         else:
             from function_getRuntime import getRuntime
-            if getRuntime(currentOS, filenameAndDirectory, filename) < 4001:  # if over 1.1 hours long, its prob not an episode
+            if getRuntime(currentOS, filenameAndDirectory, filename) < 4001:  # if over 1.1 hours long, its probably not an episode
                 outputFilename = re.sub("\s([0-9][0-9])$", r" E\1 ", outputFilename)  # If there are two digits at the end of the filename, then there probably an episode number, only on .mkv files
 
     outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces

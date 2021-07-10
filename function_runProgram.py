@@ -8,7 +8,7 @@ from function_getMetadata import getAndSaveMetadata
 from function_addMetadataAndMaps import addMetadataAndMaps
 
 
-def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun):
+def runProgram(filename, outputFileName, filenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, ifEngAudioThenNoSubs, forceOverwrite, skippedFiles, dryRun):
     wasSkipped = False
     # Check If File Exists
     if forceOverwrite is False:
@@ -33,7 +33,7 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
             iterations -= 1  # Remove from successful count
             return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
         # Process metadata
-        metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, engAudioNoSubs, infoMessages)
+        metadataAndMaps, infoMessages = addMetadataAndMaps(filenameAndDirectory, metadataTable, totalNumOfStreams, currentOS, ifEngAudioThenNoSubs, infoMessages)
         #print("test")
         print(Fore.CYAN + "Started: " + filename + Fore.RESET, end="\r")  # Print and return courser to the start of the line
         # Time for FFmpeg to do its thing:

@@ -20,7 +20,7 @@ from function_filePathCheck import filePathCheck, checkIfPathIsAFile
 #Note
 # Try to keep outputs to terminal/console below 120 characters
 
-init()  # Makes sure windows displays colour. --KEEP AT TOP--
+init()  # Makes sure colour is displayed on Windows. --KEEP AT TOP--
 
 # Check Platform, set file path slashes
 if platform.system() == "Linux":
@@ -44,7 +44,7 @@ except:
     sys.exit()
 
 inputDirectory, outputDirectory = "", ""
-runRecursive, runRename, engAudioNoSubs, forceOverwrite, noDirInputted, dryRun = False, False, False, False, False, False
+runRecursive, runRename, ifEngAudioThenNoSubs, forceOverwrite, noDirInputted, dryRun = False, False, False, False, False, False
 
 print(Fore.YELLOW + "W" + Fore.WHITE + "e" + Fore.GREEN + "l" + Fore.BLUE + "c" + Fore.MAGENTA + "o" + Fore.RED + "m" + Fore.CYAN + "e" + Fore.RESET + " to Standard Format Transcoder, by Jacksalssome")
 
@@ -54,7 +54,7 @@ parser.add_argument('-i', '--input', help="input directory")
 parser.add_argument('-o', '--output', help="output directory")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
 parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
-parser.add_argument('--engAudioNoSubs', action='store_true', help="Use the auto rename function")
+parser.add_argument('--ifEngAudioThenNoSubs', action='store_true', help="Use the auto rename function")
 parser.add_argument('--DryRun', action='store_true', help="Runs without changing files")
 args, unknown = parser.parse_known_args()
 
@@ -135,8 +135,8 @@ if args.output is not None:
         input("Press Enter to exit...")
         sys.exit()
 
-if args.engAudioNoSubs is True:  # If -r or --recursive is present then enable recursive
-    engAudioNoSubs = True
+if args.ifEngAudioThenNoSubs is True:  # If -r or --recursive is present then enable recursive
+    ifEngAudioThenNoSubs = True
 if args.overwrite is True:  # If -r or --recursive is present then enable recursive
     forceOverwrite = True
 if args.recursive is True:  # If -r or --recursive is present then enable recursive
@@ -179,7 +179,7 @@ if runRecursive is True:
                 if dryRun is False:
                     Path(root.replace(inputDirectory, outputDirectory)).mkdir(parents=True, exist_ok=True)
                 try:
-                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+                    iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFilenameAndDirectory, currentOS, ifEngAudioThenNoSubs, forceOverwrite, skippedFiles, dryRun)
                     if dryRun is True:
                         relativeInput = inputFilenameAndDirectory.replace(inputDirectory, "")
                         relativeOutput = outputFilenameAndDirectory.replace(outputDirectory, "")
@@ -235,7 +235,7 @@ elif runRecursive is False:
             elif noDirInputted is False:
                 outputFileNameAndDirectory = outputDirectory + fileSlashes + outputFilename
             try:
-                iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, engAudioNoSubs, forceOverwrite, skippedFiles, dryRun)
+                iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped = runProgram(inputFilename, outputFilename, inputFilenameAndDirectory, iterations, failedFiles, warningFiles, infoMessages, outputFileNameAndDirectory, currentOS, ifEngAudioThenNoSubs, forceOverwrite, skippedFiles, dryRun)
                 if dryRun is True and wasSkipped is False:
                     if runRename is True:
                         print("-   " + inputFilename + Fore.MAGENTA + " ---> " + Fore.RESET + outputFilename)
