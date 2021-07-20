@@ -781,6 +781,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
     outputFilename = re.sub(r"Episode ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
 
+    outputFilename = re.sub(r"([0-9][0-9])e([0-9][0-9])", r"\1E\1", outputFilename)  # 01e01 > 01E01
+    outputFilename = re.sub(r"s([0-9][0-9])E([0-9][0-9])", r"S\1E\1", outputFilename)  # s01E01 > S01E01
+
     outputFilename = re.sub(r"ep([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep03 to E03
     outputFilename = re.sub(r"ep([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep3 to E03 Haven't seen one with this case, but il code it in anyway
 
