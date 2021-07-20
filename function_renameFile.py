@@ -142,6 +142,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[1080p x265 HEVC 10bit BluRay AAC]",
         ".OAR.1080p.BluRay.x264-HD4U[rarbg]",
         ".1080p.AMZN.WEBRip.DDP2.0.x264-NTb",
+
         "[1080p BDRemux x265 DTS-HD MA 5.1]",
         "1080p BDRip 10 bits AAC x265-EMBER",
         "[VOSTFR BD x264 10bits 1080p FLAC]",
@@ -705,7 +706,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
 
     for item in removeStringsSorted:
         #print("\"" + item + "\",")
-        if not outputFilename.find(item)+len(item) == len(item) - 1:
+        if not outputFilename.lower().find(item.lower()) + len(item.lower()) == len(item.lower()) - 1:
             # covert strings to lowercase, why? because re.sub and []() don't work together
             outputFilenameLower = outputFilename.lower()
             itemLower = item.lower()
