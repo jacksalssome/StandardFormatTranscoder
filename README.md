@@ -59,6 +59,7 @@ This program was disigned to deal with anime files, hence the japenese audio and
 
 * Get the latest release from https://github.com/jacksalssome/standard-format-transcoder/releases and download the appropriate binary.
 * Have ffmpeg and ffprobe in the system path
+* Python 3.9+
 
 To Install ffmpeg and ffprobe to the system path under windows:
 1) Download https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
