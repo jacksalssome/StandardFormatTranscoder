@@ -53,8 +53,8 @@ parser.add_argument('--overwrite', action='store_true', help="Overwrites files i
 parser.add_argument('-i', '--input', help="input directory")
 parser.add_argument('-o', '--output', help="output directory")
 parser.add_argument('-r', '--recursive', action='store_true', help="Recursively look for files")
-parser.add_argument('--rename', action='store_true', help="Use the auto rename function")
-parser.add_argument('--ifEngAudioThenNoSubs', action='store_true', help="Use the auto rename function")
+parser.add_argument('--rename', action='store_true', help="Tries to remove unnecessary filename stuff")
+parser.add_argument('--ifEngAudioThenNoSubs', action='store_true', help="No Subtitles if theres a ENG audio track")
 parser.add_argument('--DryRun', action='store_true', help="Runs without changing files")
 args, unknown = parser.parse_known_args()
 

@@ -23,7 +23,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     # Need to be able to handle triple digits eg ep 123
 
     removeStrings = [  # Remove all strings listed (Note: case and order doesn't matter)
-        u"\091" u"\126" u"\065" u"\065" u"\126" u"\093",  # Cant Match Tildes so Fuck You (Its equal to [~AA~])
+        u"\091" u"\126" u"\065" u"\065" u"\126" u"\093",  # equal to [~AA~]
         u"\126" u"\065" u"\065" u"\126",  # ~AA~
         "Diamond Edition 1080p 10bit Bluray x265 HEVC [Org DD 2.0 Hindi + DD 5.1 English] ESubs ~ TombDoc",
         "1080p 10bit Bluray x265 HEVC [Org DD 5.1 Hindi + DD 5.1 English] ESub ~ TombDoc",
@@ -32,6 +32,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "BluRay x265 10Bit HEVC [English DD 5.1 640 Kbps] [Dzrg Torrents®]",
         "(1080p BluRay x265 HEVC 10bit AAC 5.1 Danish+Swedish Silence)",
         "1080p 10bit Bluray x265 HEVC English DDP 5.1 ESub ~ TombDoc",
+        "(Dvdrip 720X480p X265 Hevc Ac3x2 2.0X2)(Dual Audio)[Sxales]",
         "[BD 2160p 4K UHD][HEVC x265 10bit][Dual-Audio][Multi-Subs]",
         "1080p NF WEBRip 10bit DD 5.1 x265.HEVC D0ct0rLew[UTR-HD]",
         "(Criterion)(1080p BluRay x265 HEVC 10bit AC3 1.0 SAMPA)",
@@ -71,6 +72,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[1080p x265][Raw with JP Subs - Netflix] HR-MF",
         "(1080p BDRip x265 10bit EAC3 5.1 - Erie)[TAoE]",
         "(1080p BDRip x265 10bit EAC3 5.1 - Species180)",
+        "1080p BluRay x265 HEVC 10bit AAC 5.1-LordVako",
         "(1080p BluRay x265 HEVC 10bit EAC3 2.0 SAMPA)",
         "1080p.BluRay.AC3.x265.HEVC.10Mbit.HUN.ViZoZoN",
         "(1080p BluRay x265 HEVC 10bit EAC3 7.1 SAMPA)",
@@ -89,6 +91,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         ".1080p.10bit.DSNP.WEB-DL.DDP5.1.HEVC-Vyndros",
         "2160p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
         "1080p NF WEBRip NVENC HEVC 10bit AAC 5 1 Joy",
+        ".1080P.10Bit.Red.Web-Dl.Aac5.1.Hevc-Vyndros",
         "(1080p BluRay x265 HEVC 10bit AAC 5.1 RCVR)",
         ".1080p.AMZN.WEBRip.DDP5.1.x265-SiGMA[rartv]",
         ".1080p.NF.WEBRip.DDP5.1.Atmos.x264-NTG[TGx]",
@@ -108,6 +111,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(480p)(Multiple Subtitle)-Erai-raws[TGx]",
         "ITA-JAP Ac3 5.1 BDRip 1080p H264 [ArMor]",
         "[1080p BDRemux x265 DTS-HD MA 5.1] HR-MF",
+        ".1080p.10bit.BluRay.5.1.x265.HEVC-MZABI",
         "(DVDRip 720x480p x265 HEVC AC3x3 2.0x3)",
         "Bluray x265 10Bit AAC 5.1 - GetSchwifty",
         ".1080p.BluRay.10bit.HEVC.6CH-MkvCage.ws",
@@ -115,6 +119,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         ".1080p.H264.ita.jpn.Ac3.sub.ita-MIRCrew",
         "[ShadyCrab 1080p 8bit AAC] [Dual Audio]",
         "[1080p.x265][multisubs:eng,fre][Vostfr]",
+        ".1080P.Bluray.X264.Truehd.7.1.Atmos-Fgt",
+        "Bluray.1080P.Truehd.7.1.Atmos.X264-Grym",
         "AC3 5.1 ITA.ENG 1080p H265 sub ita.eng",
         ".1080p.DCU.WEB-DL.DDP5.1.H264-NTb[TGx]",
         "Blu-Ray.10-Bit.Dual-Audio.TrueHD.x265",
@@ -142,7 +148,6 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[1080p x265 HEVC 10bit BluRay AAC]",
         ".OAR.1080p.BluRay.x264-HD4U[rarbg]",
         ".1080p.AMZN.WEBRip.DDP2.0.x264-NTb",
-
         "[1080p BDRemux x265 DTS-HD MA 5.1]",
         "1080p BDRip 10 bits AAC x265-EMBER",
         "[VOSTFR BD x264 10bits 1080p FLAC]",
@@ -156,6 +161,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         ".1080p.BluRay.x264-REGRET[EtHD]",
         ".DVDRip.XviD-NYDIC.[UsaBit.com]",
         "10 bit 1080p HEVC BDRip [MOVIE]",
+        "(1080P Atvp Web-Dl X265 T3nzin)",
+        ".1080p.BluRay.AC35.1.x265-GREP",
+        ".1080p.BrRip.6CH.x265.HEVC-PSA",
         "(Dual Audio_10bit_BD720p_x265)",
         "[BD 1920x1080 x265 10Bit Opus]",
         ".iNTERNAL.720p.WEB.x264-GHOSTS",
@@ -174,6 +182,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "MULTI 1080p WEBRip x264-ACOOL",
         "(1080p x265 HEVC AAC 5.1 Joy)",
         "(2160p x265 HEVC AAC 5.1 Joy)",
+        ".720p.HDTV.HEVC.x265-MeGusta",
         "1080p.WEBRip.x264 - [YTS.AM]",
         ".x264.BDRip.(720p)-MediaClub",
         ".1080p.BluRay.H264.AAC-RARBG",
@@ -196,6 +205,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[Raw with JP Subs -Netflix]",
         "(DVDRip 1024x576 x265 FLAC)",
         "720p BluRay x264-W4F [RiCK]",
+        ".1080P.Bluray.X264-Amiable",
         "[DVDRip 1280x720 h264 ac3]",
         ".1080p.BluRay.x264.AC3-DDL",
         "(DVDRip Hi10 768x576 x265)",
@@ -207,6 +217,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(1080p x265 10bit Tigole)",
         "FRENCH WEBRip NF XviD-GZR",
         "(1080p WEB-DL x265 Panda)",
+        "(1080p WEB-DL x265 RCVR)",
         "(1080p BluRay x265 RCVR)",
         ".720p.WEB.h264-TBS[eztv]",
         ".1080p.BluRay.x265-RARBG",
@@ -219,6 +230,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(CX 1920x1080 x264+ AAC)",
         "1080p WEBRip x264-STRiFE",
         "720p WEBRip XviD AC3-FGT",
+        ".hdr.2160p.web.h265-ggez",
         "[Dual Audio 10bit 720p]",
         ".iNTERNAL.480p.x264-mSD",
         ".Bluray.TrueHD-7.1-Grym",
@@ -242,6 +254,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[2160p x265 10bit Joy]",
         "(2160p x265 10bit Joy)",
         "(2160p AMZN x265 10bit",
+        ".Truehd.7.1.Atmos-Fgt",
         "(1920x1080 x265 flac)",
         "[UNCENSORED BD 1080p]",
         ".WEBRip.1080p.DUB+AVO",
@@ -249,6 +262,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         ".HDTV.h264-SFM[rartv]",
         "_(10bit_BD1080p_x265)",
         "(480p TVRip x265 ImE)",
+        "[1080p BD][HEVC FLAC]",
+        "(1080p Web 1080p Joy)",
         "[Nep_Blanc]MULTI VFF",
         ".BDRip.1080p.Rus.Eng",
         "[ www.Torrent9.uno ]",
@@ -264,6 +279,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(2160p x265 q22 Joy)",
         "(2160p BD x265 10bit",
         "(Bd 1080P Hi10 Flac)",
+        "(Us Bd Remux, 1080P)",
         "(Multiple Subtitle)",
         "[BluRay 1080p HEVC]",
         "(BD1080p AC3 10bit)",
@@ -276,6 +292,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[WEBRip 1080p HEVC]",
         "[multisubs:eng,fre]",
         "WEBRip XviD AC3-FGT",
+        ".Hdr.2160P.Web.H265",
+        "[Kōritsu_bonkai77]",
         "[Eng-Subs] - Judas",
         "10bit_BD720p_x265)",
         ".DVDRip.XviD-NYDIC",
@@ -284,6 +302,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         ".WEBRip.x264-ION10",
         "Ita Eng x265-NAHOM",
         "1080p HEVC AC3 5.1",
+        "HDR.2160p.WEB.H265",
         "[BD 2160p 4K UHD]",
         "[HEVC x265 10bit]",
         "8-bit FLAC 16-bit",
@@ -303,6 +322,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "Sp33dy94-MIRCrew",
         "[HEVC x265 8bit]",
         "x265 10bits PTBR",
+        "(1080p x265 Joy)",
         "[HEVC-reencode]",
         "WEB-DLRip.1080p",
         "[LowPower-Raws]",
@@ -324,6 +344,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "(2160p x265 q20",
         "(2160p x265 q19",
         "(2160p x265 q18",
+        ".1080P.Tvshows",
+        "1080p x265 Joy",
         "(Diamond Luxe)",
         "1080p.WEB.x264",
         "[HorribleSubs]",
@@ -375,6 +397,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[1080p.x265]",
         "[HDRip][MVO]",
         "HEVC AC3 5.1",
+        "MVL.BDRemux",
+        "PSArips.com",
         "(Criterion)",
         "English-Dub",
         "[HEVC-x265]",
@@ -391,6 +415,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "FullHD x265",
         "[Noob-Subs]",
         "[SAIO Raws]",
+        "AC3x2 2.0x2",
+        "Atmos-MIXED",
+        "PETFRiFiED",
         "[x264][BD]",
         "[BD 1080p]",
         "Dual Audio",
@@ -416,6 +443,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[BD 1036p]",
         "[bonkai77]",
         "Theatrical",
+        "x265-GREP",
         "Web 1080p",
         "Erai-raws",
         "D0ct0rLew",
@@ -433,6 +461,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[EROBEAT]",
         "[BDremux]",
         "MediaClub",
+        "[Taedium]",
         "Mp4 1080p",
         "[Moozzi2]",
         "[AnimeRG]",
@@ -448,6 +477,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[AniFilm]",
         "[RUS+JAP]",
         "Directors",
+        "X264-Grym",
+        "LordVako",
+        "HEVC-PSA",
         "WEB.x264",
         "[Subbed]",
         "WEB.h264",
@@ -472,6 +504,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "Eng-Subs",
         "[YTS AM]",
         "[Nemuri]",
+        "Vyndros",
         "BD1080p",
         "[ZRIPZ]",
         "[10Bit]",
@@ -505,6 +538,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[h.265]",
         "(Pilot)",
         "TombDoc",
+        "Amiable",
+        "seleZen"
         "E-OPUS",
         "[Cleo]",
         "[Opus]",
@@ -548,6 +583,8 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "-ACOOL",
         "[YIFY]",
         "[RiCK]",
+        "DDP5.1",
+        "Atmos",
         "2160p",
         "HR-RG",
         "HR-GZ",
@@ -592,7 +629,18 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "[RAW]",
         "h.265",
         "TVRip",
+        "[Npz]",
+        ".hdr.",
+        " hdr ",
+        "KOGi",
+        "BDMV",
+        "HDR.",
+        ".HDR",
+        "glhf",
+        "ggwp",
+        "ggez",
         "ZMNT",
+        "720p",
         " 4k ",
         " UHD",
         "480p",
@@ -620,6 +668,7 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "DVD",
         "JPN",
         "Scy",
+        "vxt",
         "[]",
         "()",
         "{}",
@@ -706,10 +755,12 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
 
     for item in removeStringsSorted:
         #print("\"" + item + "\",")
-        if not outputFilename.lower().find(item.lower()) + len(item.lower()) == len(item.lower()) - 1:
-            # covert strings to lowercase, why? because re.sub and []() don't work together
-            outputFilenameLower = outputFilename.lower()
-            itemLower = item.lower()
+        # covert strings to lowercase, why? because re.sub and []() don't work together
+        outputFilenameLower = outputFilename.lower()
+        itemLower = item.lower()
+
+        if not outputFilenameLower.find(itemLower)+len(itemLower) == len(itemLower) - 1:
+
             # Beautiful, we don't work on the actual filename, so original uppercase and lowercase is unchanged
             # only subtracting the positions
             outputFilename = outputFilename[:outputFilenameLower.find(itemLower)] + outputFilename[outputFilenameLower.find(itemLower) + len(item):]
@@ -748,6 +799,9 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     #outputFilename = re.sub("\.$", "", outputFilename)
     #print(re.search("\.$", outputFilename))
 
+    outputFilename = re.sub("-[0-9][0-9]$", "", outputFilename, flags=re.I)  # Handbrake puts -X or -XX at end of files
+    outputFilename = re.sub("-[0-9]$", "", outputFilename, flags=re.I)
+
     if not re.search("S[0-9][0-9]E[0-9][0-9].[0-9] ", outputFilename):  # If S01E01.5(space), then skip removing dots (Some use the .5 for a second part of an episode)
         if outputFilename.count(".") >= 2 and re.search("\.$", outputFilename) is None:  # if theres 2 or more dots
             outputFilename = outputFilename.replace(".", " ")  # _ is usually a stand in for a space
@@ -781,15 +835,14 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     outputFilename = re.sub(r"ep ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
     outputFilename = re.sub(r"Episode ([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep 3 to E03
 
-    outputFilename = re.sub(r"([0-9][0-9])e([0-9][0-9])", r"\1E\1", outputFilename)  # 01e01 > 01E01
-    outputFilename = re.sub(r"s([0-9][0-9])E([0-9][0-9])", r"S\1E\1", outputFilename)  # s01E01 > S01E01
-
     outputFilename = re.sub(r"ep([0-9][0-9])", r"E\1", outputFilename, flags=re.I)  # ep03 to E03
     outputFilename = re.sub(r"ep([0-9])", r"E0\1", outputFilename, flags=re.I)  # ep3 to E03 Haven't seen one with this case, but il code it in anyway
 
     outputFilename = re.sub("- ([0-9][0-9][0-9])$", r" E\1 ", outputFilename)  # Replace "- 001" with E001, why would any have so may episodes, IDK
     outputFilename = re.sub("-([0-9][0-9])$", r" E\1 ", outputFilename)  # Replace -01 If at end of file name
     outputFilename = re.sub("\[([0-9][0-9])]", r" E\1 ", outputFilename)  # Replace [01] with E01
+
+    outputFilename = re.sub("e([0-9][0-9])", r"E\1 ", outputFilename)  #S01e01 > S01E01
 
     outputFilename = re.sub("([0-9][0-9])x([0-9][0-9])", r" S\1E\2 ", outputFilename, flags=re.I)  # 11x01 to S11E01
     outputFilename = re.sub("([0-9])x([0-9][0-9])", r" S0\1E\2 ", outputFilename, flags=re.I)  # 1x01 to S01E01
@@ -799,6 +852,13 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
 
     outputFilename = outputFilename.replace(" -", " ")
     outputFilename = outputFilename.replace("- ", " ")
+    outputFilename = re.sub("(-$)", "", outputFilename, flags=re.I)  # test-.mkv to test.mkv
+
+    outputFilename = re.sub("(\([0-9]\))", "", outputFilename, flags=re.I)  # remove (1)
+    outputFilename = re.sub("(-[0-9]$)", "", outputFilename, flags=re.I)  # test-4.mkv to test.mkv
+    outputFilename = re.sub("(-[0-9][0-9]$)", "", outputFilename, flags=re.I)  # test-99.mkv to test.mkv
+
+    # print(outputFilename)
 
     outputFilename = re.sub("\s\s+", " ", outputFilename)  # Make 2 or more continuous spaces into one, yes we do this twice
     outputFilename = outputFilename.strip()  # Remove leading and trailing whitespaces

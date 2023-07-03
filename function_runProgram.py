@@ -39,23 +39,27 @@ def runProgram(filename, outputFileName, filenameAndDirectory, iterations, faile
         # Time for FFmpeg to do its thing:
         if currentOS == "Linux":
             #print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" +  metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
-            errorCheck = run("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+            errorCheck = run("ffmpeg " + overwriteOption + " -v error -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -bitexact -bsf:v \"filter_units=remove_types=6|35|38-40\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
         elif currentOS == "Windows":
-            #print("ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
-            errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -xerror -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+            #print("ffmpeg " + overwriteOption + " -v error -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -c copy \"" + outputFileNameAndDirectory + "\"")
+            errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -bitexact -bsf:v \"filter_units=remove_types=6|35|38-40\" -c copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+            #errorCheck = run("cmd /c ffmpeg " + overwriteOption + " -v error -i \"" + filenameAndDirectory + "\" -map_metadata -1 -map_chapters 0" + metadataAndMaps + " -metadata title=\"\" -bitexact -bsf:v \"filter_units=remove_types=6|35|38-40\" -c:a libopus -b:a 192k -ac 2 -c:v copy \"" + outputFileNameAndDirectory + "\"", capture_output=True, shell=True)
+
         if len(str(errorCheck.stderr)) > 8:  # Integrity and error check
             if str(errorCheck.stderr).find("Referenced QT chapter track not found") != -1:
                 print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
                 infoMessages += 1
                 return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
             elif str(errorCheck.stderr).find("already exists. Exiting.") != -1:
-                print("already exists")
+                print("File already exists")
                 #infoMessages += 1
             elif "unknown timestamp" in str(errorCheck.stderr):
+                print("ffmpeg error :", errorCheck.stderr)
                 print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
                 infoMessages += 1
                 return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
             elif "Non-monotonous DTS" in str(errorCheck.stderr):
+                print("ffmpeg error :", errorCheck.stderr)
                 print(Fore.CYAN + "Error in the input file, but transcode was completed: " + Fore.GREEN + outputFileName + Fore.RESET)
                 infoMessages += 1
                 return iterations, failedFiles, warningFiles, infoMessages, skippedFiles, wasSkipped
