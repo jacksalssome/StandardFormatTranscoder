@@ -18,7 +18,7 @@ def checkForDups(tempList):  # List duplication checker
         print("Duplicates found in List: " + str(dupes))
 
 
-def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename, dryRun):
+def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename):
 
     # Need to be able to handle triple digits eg ep 123
 
@@ -674,73 +674,6 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
         "{}",
         ]
 
-    # simpleList = [
-    # "AMZN",
-    # "WEB DL",
-    # "x265",
-    # "x264",
-    # "HEVC",
-    # "AVC",
-    # "10bit",
-    # "AAC",
-    # "EAC3",
-    # "5.1",
-    # "2.0",
-    # "BD",
-    # "Dual Audio",
-    # "TVRip",
-    # "480p",
-    # "720p",
-    # "Bluray",
-    # "Dual.Audio",
-    # "h.265",
-    # "5 1",
-    # "WEBRip",
-    # "MULTI",
-    # "AC3",
-    # "XviD",
-    # "VOSTFR",
-    # "DD5.1",
-    # "NF",
-    # "1036p",
-    # "HDRip",
-    # "1920x1036",
-    # "1920x1080",
-    # "BDRip",
-    # "OPUS",
-    # "HDR",
-    # "UHD",
-    # "2160p",
-    # "8bit",
-    # "FLAC",
-    # "Blu ray",
-    # "eng subbed",
-    # "WEBDL",
-    # "WEB-DL",
-    # "1024x576",
-    # "768x576",
-    # "576p",
-    # "FullHD",
-    # "UltraHD",
-    # "BDRemux",
-    # "DTS-HD",
-    # "Netflix",
-    # "H264",
-    # "1280x720",
-    # "WEB-DLRip",
-    # "Hi10",
-    # "DVDRip",
-    # "HDTVRip",
-    # "DVD9",
-    # "DVD",
-    # "DTS",
-    # "TrueHD",
-    # "Blu-Ray",
-    # "16-bit",
-    # "WEB",
-    # "Multi"
-    # ]
-
     # List duplication checker :)
     #checkForDups(removeStrings)
 
@@ -771,27 +704,6 @@ def renameFile(currentOS, filenameAndDirectory, filename, previousOutputFilename
     outputFilename = re.sub("FS[0-9][0-9][0-9] Joy]", "", outputFilename, flags=re.I)      #
     outputFilename = re.sub("S[0-9][0-9] Joy\)", "", outputFilename, flags=re.I)            # for one person
     outputFilename = re.sub("S[0-9][0-9] Joy]", "", outputFilename, flags=re.I)            #
-    # match = 0
-    # firstMatchText = ""
-    # secondMatchText = ""
-    # for item in simpleList:  # The Terminator, if brute force won't work, then well have to rely on smarts.
-    #    if outputFilename.find(item) != -1:  # If it finds like x265 and Hi10 between two brackets it will remove it.
-    #        match += 1
-    #        if match == 1:
-    #            firstMatchText = item
-    #        elif match == 2:
-    #            secondMatchText = item
-    #            inputLen = len(outputFilename)
-    #            matching = r"\(.*(" + firstMatchText + r").*(" + secondMatchText + r").*\)"
-    #            outputFilename = re.sub(matching, "", outputFilename)
-    #            matching = r"\[(].*(" + firstMatchText + r").*(" + secondMatchText + r").*\]"
-    #            outputFilename = re.sub(matching, "", outputFilename)
-    #            if inputLen == len(outputFilename):  # Flip the secondMatchText and firstMatchText
-    #                matching = r"\(.*(" + secondMatchText + r").*(" + firstMatchText + r").*\)"
-    #                outputFilename = re.sub(matching, "", outputFilename)
-    #                matching = r"\[(].*(" + secondMatchText + r").*(" + firstMatchText + r").*\]"
-    #                outputFilename = re.sub(matching, "", outputFilename)
-    #            break
 
     outputFilename = re.sub("\[[^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]]", "", outputFilename, flags=re.I)  # remove e.g.[ABC12345]
     outputFilename = re.sub("\([^\[][^\[][^\[][^\[][^\[][^\[][^\[][^\[]\)", "", outputFilename, flags=re.I)  # remove e.g.(ABC12345)
