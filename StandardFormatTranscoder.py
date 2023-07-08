@@ -225,7 +225,7 @@ elif runRecursive is False:
         if inputFilename.endswith(".mkv") or inputFilename.endswith(".mp4") or inputFilename.endswith(".m4v"):  # Find Any MKV files
             inputFilenameAndDirectory = inputDirectory + fileSlashes + inputFilename  # Absolute path of input file
             if runRename is True:  # Rename File
-                outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename, dryRun)  # Call up function renameFile
+                outputFilename = renameFile(currentOS, inputFilenameAndDirectory, inputFilename, previousOutputFilename)  # Call up function renameFile
             else:  # keep file name
                 outputFilename = inputFilename[:-4] + ".mkv"  # Replace extension with .mkv
             if noDirInputted is True:
